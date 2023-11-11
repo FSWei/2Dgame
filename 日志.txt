@@ -143,3 +143,6 @@ https://learn.microsoft.com/zh-cn/windows/console/console-screen-buffer-infoex#m
 
 2023/11/10 17:00
 用python脚本生成地图的时候，前景地图的字符为 W ，背景为 . ，主要的任务是读取图片中的颜色，并以RGB的格式存储
+
+2023/11/11 15:11
+守恒，不平衡则趋向毁灭
