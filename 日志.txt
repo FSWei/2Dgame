@@ -86,8 +86,8 @@ https://learn.microsoft.com/zh-cn/windows/console/console-screen-buffer-infoex#m
 关于字体颜色的问题，经过几个小时的探索，找到了两个方法：
 其一：首先通过GetConsoleScreenBufferInfoEx获取标准输出的CONSOLE_SCREEN_BUFFER_INFOEX，然后以RGB格式修改其中的ColorTable属性,最后用SetConsoleTextAttribute设置
 但是探索很长时间后，发现怎么修改都是没有效果。遂放弃
-其二：直接用ansi转义符，设置背景和前景颜色，这个方法成功了，通过printf("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm", i, j, k, k, j, i);设置前景和背景颜色
-打印字符之后，再用printf("\x1B[0m");恢复默认状态即可
+其二：直接用ansi转义符，设置背景和前景颜色，这个方法成功了，通过printw("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm", i, j, k, k, j, i);设置前景和背景颜色
+打印字符之后，再用printw("\x1B[0m");恢复默认状态即可
 详细的测试代码见文件夹test里的color_test.cpp
 *(改是改好了，但是卡顿和闪烁问题变得很严重，双缓冲问题亟待解决)*
 

@@ -18,9 +18,9 @@ int main() {
     int a, b, c;
     unpack(packed, &a, &b, &c);
     
-    printf("Original values: x = %d, y = %d, z = %d\n", x, y, z);
-    printf("Packed value: %d\n", packed);
-    printf("Unpacked values: a = %d, b = %d, c = %d\n", a, b, c);
+    printw("Original values: x = %d, y = %d, z = %d\n", x, y, z);
+    printw("Packed value: %d\n", packed);
+    printw("Unpacked values: a = %d, b = %d, c = %d\n", a, b, c);
     
     return 0;
 }

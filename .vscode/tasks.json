@@ -3,13 +3,14 @@
         {
             "type": "cppbuild",
             "label": "2dgame",
-            "command": "D:\\mingw64\\bin\\g++.exe",
+            "command": "g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "*.cpp",
                 "-o",
-                "${fileDirname}\\exe\\game.exe"
+                "${fileDirname}/exe/game",
+                "-lncurses"
             ],
             "options": {
                 "cwd": "${fileDirname}"

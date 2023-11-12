@@ -11,25 +11,27 @@ std::mutex mtx;		// 使用互斥锁，避免因为两者同时渲染而出现的
 void win()
 {
 	SetColor(Color(255, 255, 255), Color(0, 0, 0));
-	system("cls");
+	// system("cls");
+	clear();
 	for (int i = 0; i < 11; i++)
 	{
 		for (int j = 0; j < 32; j++)
 		{
 			if (j == 0 || j == 31 || i == 0 || i == 10)
 			{
-				printf("* ");
-				Sleep(10);
+				printw("* ");
+				// Sleep(10);
+				napms(10);
 			}
 			else
-				printf("  ");
+				printw("  ");
 			if (i == 5 && j == 12)
 			{
-				printf("YOU WIN ");
+				printw("YOU WIN ");
 				j = 16;
 			}
 		}
-		printf("\n");
+		printw("\n");
 	}
 	UnsetColor();
 }
@@ -37,25 +39,27 @@ void win()
 void lose()
 {
 	SetColor(Color(255, 255, 255), Color(0, 0, 0));
-	system("cls");
+	// system("cls");
+	clear();
 	for (int i = 0; i < 11; i++)
 	{
 		for (int j = 0; j < 32; j++)
 		{
 			if (j == 0 || j == 31 || i == 0 || i == 10)
 			{
-				printf("* ");
-				Sleep(10);
+				printw("* ");
+				// Sleep(10);
+				napms(10);
 			}
 			else
-				printf("  ");
+				printw("  ");
 			if (i == 5 && j == 12)
 			{
-				printf("YOU LOSE");
+				printw("YOU LOSE");
 				j = 16;
 			}
 		}
-		printf("\n");
+		printw("\n");
 	}
 	UnsetColor();
 }
@@ -64,33 +68,67 @@ void print_data(player *p, enemy (*e)[MAXENEMY])
 {
 	SetColor(Color(255, 255, 255), Color(0, 0, 0));
 
+	// int tmp = 0;
+
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("preblock:%c   ", p->preblock);
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("pos:%d,%d   ", p->pos.x, p->pos.y);
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("next:%d,%d:%c    ", p->pos.x + p->v.x * p->xdirection, p->pos.y + p->isair * p->ydirection, p->m->blocktype[p->pos.y + p->isair * p->ydirection][p->pos.x + p->v.x * p->xdirection].type);
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("v:%d,%d   ", p->v.x, p->v.y);
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("direction:%d,%d   ", p->xdirection, p->ydirection);
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("hop_count:%d   ", p->hop_count);
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("istop:%d,isair:%d,isjump:%d,iswalk:%d,isdash:%d     ", p->istop, p->isair, p->isjump, p->iswalk, p->isdash);
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("time:%d   ", _time);
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("c.left:%d,c.top:%d    ", p->c->left, p->c->top);
+	// gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// printw("dash_cooling_time:%d   ", p->dash_cooling_time);
+
 	int tmp = 0;
 
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("preblock:%c   ", p->preblock);
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("pos:%d,%d   ", p->pos.x, p->pos.y);
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("next:%d,%d:%c    ", p->pos.x + p->v.x * p->xdirection, p->pos.y + p->isair * p->ydirection, p->m->blocktype[p->pos.y + p->isair * p->ydirection][p->pos.x + p->v.x * p->xdirection].type);
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("v:%d,%d   ", p->v.x, p->v.y);
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("direction:%d,%d   ", p->xdirection, p->ydirection);
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("hop_count:%d   ", p->hop_count);
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("istop:%d,isair:%d,isjump:%d,iswalk:%d,isdash:%d     ", p->istop, p->isair, p->isjump, p->iswalk, p->isdash);
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("time:%d   ", _time);
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("c.left:%d,c.top:%d    ", p->c->left, p->c->top);
-	gotoxy(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	printf("dash_cooling_time:%d   ", p->dash_cooling_time);
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("preblock:%c   ", p->preblock);
+
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("pos:%d,%d   ", p->pos.x, p->pos.y);
+
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("next:%d,%d:%c    ", p->pos.x + p->v.x * p->xdirection, p->pos.y + p->isair * p->ydirection, p->m->blocktype[p->pos.y + p->isair * p->ydirection][p->pos.x + p->v.x * p->xdirection].type);
+
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("v:%d,%d   ", p->v.x, p->v.y);
+
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("direction:%d,%d   ", p->xdirection, p->ydirection);
+
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("hop_count:%d   ", p->hop_count);
+
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("istop:%d,isair:%d,isjump:%d,iswalk:%d,isdash:%d     ", p->istop, p->isair, p->isjump, p->iswalk, p->isdash);
+
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("time:%d,ch:%d\\%c   ", _time, ch, ch);
+
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("c.left:%d,c.top:%d    ", p->c->left, p->c->top);
+
+	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
+	printw("dash_cooling_time:%d   ", p->dash_cooling_time);
 
 	for (int i = 0; i < MAXENEMY; i++)
 	{
-		gotoxy((LEFT_BORDER + CAMERA_LENGTH + RIGHT_BORDER) * 2, TOP_BORDER + i);
-		printf("enemy%d.pos%d,%d    ", i, (*e)[i].pos.x, (*e)[i].pos.y);
+		// gotoxy((LEFT_BORDER + CAMERA_LENGTH + RIGHT_BORDER) * 2, TOP_BORDER + i);
+		// printw("enemy%d.pos%d,%d    ", i, (*e)[i].pos.x, (*e)[i].pos.y);
+		move(TOP_BORDER + i, (LEFT_BORDER + CAMERA_LENGTH + RIGHT_BORDER) * 2);
+		printw("enemy%d.pos%d,%d    ", i, (*e)[i].pos.x, (*e)[i].pos.y);
 	}
 	UnsetColor();
 }
@@ -210,7 +248,7 @@ void test()
 	std::thread playerThread(updatePlayer, &p);
 	std::thread enemyThread(updateEnemy, &e);
 	std::thread renderThread(render, &p, &e);
-	std::thread timerThread(timer, &p);
+	std::thread timerThread(timer, &p);   
 
 	playerThread.join();
 	enemyThread.join();
@@ -220,30 +258,45 @@ void test()
 
 int main()
 {
+	initscr();			   // 初始化ncurses
+	start_color();
+	cbreak();			   // 禁用行缓冲
+	noecho();			   // 不在屏幕上显示按键
+	nodelay(stdscr, TRUE); // 设置非阻塞模式
+	keypad(stdscr, TRUE);  // 启用键盘特殊按键（如方向键）
 	bool playAgain = true;
 
 	while (playAgain)
 	{
-		system("cls");
-		gotoxy(0, 0);
-		HideConsoleCursor(); // 隐藏光标
+		// system("cls");
+		clear();
+		// gotoxy(0, 0);
+		move(0, 0);
+		// HideConsoleCursor(); // 隐藏光标
+
+		nodelay(stdscr, TRUE); // 设置非阻塞模式
+
 		test();
 
 		gamestatus = 1;
 		// ShowConsoleCursor();//显示光标
 
-		printf("Game over! Play again? (Y/N): ");
+		printw("Game over! Play again? (Y/N): ");
 
-		FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE)); // 清空输入缓冲区
+		// FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE)); // 清空输入缓冲区
 
 		char choice = 0;
-		scanf(" %c", &choice); //%c前面加空格以跳过制表符、空格和换行符等空白字符，确保scanf只读取有效的字符
+		// scanf(" %c", &choice); //%c前面加空格以跳过制表符、空格和换行符等空白字符，确保scanf只读取有效的字符
 
+		nodelay(stdscr, FALSE); // 设置阻塞模式
+		choice = getch();
 		if (choice == 'N' || choice == 'n')
 		{
 			playAgain = false;
 		}
 	}
+
+	endwin();
 
 	return 0;
 }

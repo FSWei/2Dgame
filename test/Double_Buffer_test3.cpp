@@ -23,10 +23,10 @@ void Render()
     WriteConsoleOutputCharacterA(hConsole, (LPCSTR)lenbuf, 1410, bufferCoord, &bufferSize1);
     // WriteConsoleOutputCharacterA(hConsole, (LPCSTR)tmpbuf, sizeof(tmpbuf), bufferCoord, &bufferSize1);
     WriteConsoleOutputCharacterA(hConsole, (LPCSTR)tmp2buf, sizeof(tmp2buf), bufferCoord, &bufferSize1);
-    // printf("%s", consoleBuffer);
+    // printw("%s", consoleBuffer);
 
-    // printf("%d\n", bufferSize);
-    // printf("%d\n", bufferSize1);
+    // printw("%d\n", bufferSize);
+    // printw("%d\n", bufferSize1);
 }
 
 int main()
@@ -36,22 +36,22 @@ int main()
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(hConsole, &csbi);
 
-    // printf("%d,%d\n", csbi.dwSize.X, csbi.dwSize.Y);
+    // printw("%d,%d\n", csbi.dwSize.X, csbi.dwSize.Y);
 
     COORD bufferSize2;
     bufferSize2.X = 1411;
     bufferSize2.Y = 16 * 4;
-    // printf("%d\n", SetConsoleScreenBufferSize(hConsole, bufferSize2)); // 设置缓冲区大小
+    // printw("%d\n", SetConsoleScreenBufferSize(hConsole, bufferSize2)); // 设置缓冲区大小
     SetConsoleScreenBufferSize(hConsole, bufferSize2); // 设置缓冲区大小
 
     SetConsoleActiveScreenBuffer(hConsole);
 
     GetConsoleScreenBufferInfo(hConsole, &csbi);
 
-    // printf("%d,%d\n", csbi.dwSize.X, csbi.dwSize.Y);
+    // printw("%d,%d\n", csbi.dwSize.X, csbi.dwSize.Y);
 
 
-    // printf("%d", sizeof(buf));
+    // printw("%d", sizeof(buf));
     // for (int j = 0; j <= 16; j++)
     // {
     //     for (int i = j * 1410; i < j * 1410 + 32 * (sizeof(buf) - 1); i += (sizeof(buf) - 1))
@@ -62,7 +62,7 @@ int main()
     //     consoleBuffer[32 * (sizeof(buf) - 1) + 1] = '\n';
     // }
 
-    // printf("%d", sizeof(lenbuf));
+    // printw("%d", sizeof(lenbuf));
     // for (int i = 0; i < 22561; i+=1410)
     // {
     //     strcpy(&consoleBuffer[i], lenbuf);

@@ -2,24 +2,45 @@
 
 void player::input()
 {
-    if ((GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // w、↑
+    // if ((GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // w、↑
+    // {
+    //     isjump = true;
+    // }
+
+    // if ((GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000)) // d、→
+    // {
+    //     iswalk = true;
+    //     xdirection = RIGHT;
+    // }
+
+    // else if ((GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000)) // a、←
+    // {
+    //     iswalk = true;
+    //     xdirection = LEFT;
+    // }
+
+    // if (GetAsyncKeyState(0x4A) & 0x8000) // j
+    // {
+    //     isdash = true;
+    // }
+
+    ch = getch(); // 获取当前按键
+
+    if (ch == 'w' || ch == KEY_UP) // 对应 W 键或向上箭头键
     {
         isjump = true;
     }
-
-    if ((GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000)) // d、→
+    else if (ch == 'd' || ch == KEY_RIGHT) // 对应 D 键或向右箭头键
     {
         iswalk = true;
         xdirection = RIGHT;
     }
-
-    else if ((GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000)) // a、←
+    else if (ch == 'a' || ch == KEY_LEFT) // 对应 A 键或向左箭头键
     {
         iswalk = true;
         xdirection = LEFT;
     }
-
-    if (GetAsyncKeyState(0x4A) & 0x8000) // j
+    else if (ch == 'j') // 对应 J 键
     {
         isdash = true;
     }
@@ -50,7 +71,8 @@ int player::update()
         ydirection = DOWN;
         hop_count--;
     }
-    else if (isair && !(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // 如果角色浮空并且没有按W或上，则一直下降
+    // else if (isair && !(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // 如果角色浮空并且没有按W或上，则一直下降
+    else if (isair && !(ch == 'w' || ch == KEY_UP))
     {
         istop = true;
         ydirection = DOWN;
@@ -71,17 +93,20 @@ int player::update()
     dash();
 
     // 如果左键右键a键d键都松开，iswalk = false
-    if (!(GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000 || GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000))
+    // if (!(GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000 || GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000))
+    if (!(ch == 'a' || ch == KEY_LEFT || ch == 'd' || ch == KEY_RIGHT))
     {
         iswalk = false;
     }
     // 如果上键松开，isjump = false
-    if (!(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000))
+    // if (!(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000))
+    if (!(ch == 'w' || ch == KEY_UP))
     {
         isjump = false;
     }
     // 如果j键松开，jsdash=false
-    if (!(GetAsyncKeyState(0x4A) & 0x8000))
+    // if (!(GetAsyncKeyState(0x4A) & 0x8000))
+    if (!(ch == 'j'))
     {
         isdash = false;
     }
@@ -137,7 +162,7 @@ void player::camera_render()
                 if (m->blocktype[y][x].type == PLAYER)
                 {
                     // SetColor(foregroundcolor , backgroundcolor);
-                    // printf("%c ", m->blocktype[y][x].type);
+                    // printw("%c ", m->blocktype[y][x].type);
                     // UnsetColor();
                 }
                 else if (m->blocktype[y][x].type == ENEMY)
@@ -148,11 +173,11 @@ void player::camera_render()
                 else
                 {
                     SetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
-                    // printf("%c ", m->blocktype[y][x].type);
+                    // printw("%c ", m->blocktype[y][x].type);
                     c->renderObject(x, y, m->blocktype[y][x].type);
                     UnsetColor();
                 }
-                // printf("%c ", m->blocktype[y][x].type);//不可以写在这里，因为颜色
+                // printw("%c ", m->blocktype[y][x].type);//不可以写在这里，因为颜色
             }
         }
     }

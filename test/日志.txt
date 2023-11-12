@@ -1,6 +1,6 @@
 2023/10/26 11:32
 
-1、printf("%s")就可以正常显示，而使用WriteConsoleOutputCharacterA就出现问题
+1、printw("%s")就可以正常显示，而使用WriteConsoleOutputCharacterA就出现问题
 2、注意结尾无\0
 3、在test3中增加缓冲区大小和字符串长度测试一下
 

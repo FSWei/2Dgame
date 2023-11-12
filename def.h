@@ -3,7 +3,8 @@
 
 #include <stdio.h>
 #include <time.h>
-#include <Windows.h>
+// #include <Windows.h>
+#include <ncursesw/ncurses.h>
 #include <vector>
 #include <tuple>
 #include <thread>
@@ -23,11 +24,11 @@
 #define CAMERA_LENGTH 32
 #define CAMERA_HEIGHT 16
 
-#define LEFT_BORDER 2                                           // 左侧边界
-#define RIGHT_BORDER 2                                          // 右侧边界
-#define TOP_BORDER 2                                            // 顶端边界
-#define BOTTOM_BORDER 2                                         // 底端边界
-#define BORDER_COLOR 255,255,255 // 边框颜色
+#define LEFT_BORDER 2              // 左侧边界
+#define RIGHT_BORDER 2             // 右侧边界
+#define TOP_BORDER 2               // 顶端边界
+#define BOTTOM_BORDER 2            // 底端边界
+#define BORDER_COLOR 255, 255, 255 // 边框颜色
 
 #define MAXHOP 4                 // 最大跳跃高度
 #define MAXENEMY 4               // 敌人数量
@@ -49,12 +50,13 @@ struct pos_
     int y;
 };
 
-extern void gotoxy(int x, int y);
+// extern void gotoxy(int x, int y);
 extern void HideConsoleCursor();
 extern void ShowConsoleCursor();
 extern int Color(int r, int g, int b); // 打包颜色
 extern void SetColor(int foregroundcolor, int backgroundcolor);
 extern void UnsetColor();
 extern int _time; // 游戏时间
+extern int ch;
 
 #endif

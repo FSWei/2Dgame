@@ -18,7 +18,7 @@ char *Color(int fr, int fg, int fb, int br, int bg, int bb)
     // char s[38];
     char *s = new char[38 + 1]; // 注意\0，所以+1（无需担心\0，后面会自动覆盖掉）
     // 以格式化方式给s赋值
-    sprintf(s, "\x1B[38;2;%03d;%03d;%03dm\x1B[48;2;%03d;%03d;%03dm", fr, fg, fb, br, bg, bb);
+    sprintw(s, "\x1B[38;2;%03d;%03d;%03dm\x1B[48;2;%03d;%03d;%03dm", fr, fg, fb, br, bg, bb);
     return s;
 }
 
@@ -44,7 +44,7 @@ void SetChar(int x, int y, char c, int fr, int fg, int fb, int br, int bg, int b
         consoleBuffer[y * (screenWidth * (42 + 1 + 1)) + x * (42 + 1 + 1) + n * 2] = '\r';
         consoleBuffer[y * (screenWidth * (42 + 1 + 1)) + x * (42 + 1 + 1) + n * 2 + 1] = '\n';
         // FILE *file = fopen("test.txt", "a");
-        // fprintf(file, "\r\n");
+        // fprintw(file, "\r\n");
         // fclose(file);
         n++;
     }
@@ -53,12 +53,12 @@ void SetChar(int x, int y, char c, int fr, int fg, int fb, int br, int bg, int b
         char *s = Color(fr, fg, fb, br, bg, bb);
         strcpy(&consoleBuffer[y * (screenWidth * (42 + 1 + 1)) + x * (42 + 1 + 1) + n * 2], s); // 这里的+1+1一个是为了字符，一个是为了空格
         // FILE *file = fopen("test.txt", "a");
-        // fprintf(file, "%s", s);
+        // fprintw(file, "%s", s);
         delete[] s;
         consoleBuffer[y * (screenWidth * (42 + 1 + 1)) + x * (42 + 1 + 1) + 38 + n * 2] = c;
-        // fprintf(file, "%c", c);
+        // fprintw(file, "%c", c);
         char tmp[4 + 1 + 1] = " \x1B[0m"; // 注意\0，所以+1，注意前面的空格，所以+1（无需担心\0，后面会自动覆盖掉）
-        // fprintf(file, "%s", tmp);
+        // fprintw(file, "%s", tmp);
         // fclose(file);
         strcpy(&consoleBuffer[y * (screenWidth * (42 + 1 + 1)) + x * (42 + 1 + 1) + 38 + 1 + n * 2], tmp);
     }
@@ -71,16 +71,16 @@ void Render()
 
     WriteConsoleOutputCharacterA(hConsole, (LPCSTR)consoleBuffer, bufferSize, bufferCoord, &bufferSize1);
 
-    // printf("%d\n", bufferSize);
-    // printf("%d\n", bufferSize1);
+    // printw("%d\n", bufferSize);
+    // printw("%d\n", bufferSize1);
     
     // FILE *file = fopen("test.txt", "a");
-    // fprintf(file, "%d\n%d\n", bufferSize, bufferSize1);
+    // fprintw(file, "%d\n%d\n", bufferSize, bufferSize1);
     // fclose(file);
 
-    // printf("%s", consoleBuffer);
+    // printw("%s", consoleBuffer);
     // FILE* file = fopen("test.txt", "w");
-    // fprintf(file, "%s", consoleBuffer);
+    // fprintw(file, "%s", consoleBuffer);
 }
 
 int main()
@@ -89,18 +89,18 @@ int main()
     CONSOLE_SCREEN_BUFFER_INFO csbi;
 
     GetConsoleScreenBufferInfo(hConsole, &csbi);     // 获取缓冲区信息
-    printf("%d,%d\n", csbi.dwSize.X, csbi.dwSize.Y); // 打印一下目前缓冲区大小
+    printw("%d,%d\n", csbi.dwSize.X, csbi.dwSize.Y); // 打印一下目前缓冲区大小
 
     COORD bufferSize2;
     bufferSize2.X = screenWidth * (42 + 1 + 1) + 2;
     bufferSize2.Y = screenHeight * 10; // 太小的话会设置失败
-    // printf("%d\n", SetConsoleScreenBufferSize(hConsole, bufferSize2)); // 设置缓冲区大小，结果为1则成功
+    // printw("%d\n", SetConsoleScreenBufferSize(hConsole, bufferSize2)); // 设置缓冲区大小，结果为1则成功
     SetConsoleScreenBufferSize(hConsole, bufferSize2);
 
     SetConsoleActiveScreenBuffer(hConsole); // 设置活动缓冲区
 
     GetConsoleScreenBufferInfo(hConsole, &csbi);     // 获取屏幕缓冲区信息
-    printf("%d,%d\n", csbi.dwSize.X, csbi.dwSize.Y); // 打印新的缓冲区大小
+    printw("%d,%d\n", csbi.dwSize.X, csbi.dwSize.Y); // 打印新的缓冲区大小
 
     // 随机数种子
     srand((unsigned)time(NULL));
@@ -147,7 +147,7 @@ int main()
                 bb += rand() % 512;
                 bb %= 255;
 
-                // printf("fr:%d,fg:%d,fb:%d,br:%d,bg:%d,bb:%d     \n", fr, fg, fb, br, bg, bb);
+                // printw("fr:%d,fg:%d,fb:%d,br:%d,bg:%d,bb:%d     \n", fr, fg, fb, br, bg, bb);
                 // SetChar(x, y, 32 + (x + y + fr + fg + fb + br + bg + bb) % (127 - 32), fr, fg, fb, br, bg, bb);
                 SetChar(x, y, '.', 123, 123, 123, 123, 123, 123);
             }
@@ -155,7 +155,7 @@ int main()
 
         consoleBuffer[bufferSize] = '\0';
         Render();
-        // printf("fr:%d,fg:%d,fb:%d,br:%d,bg:%d,bb:%d     \n", fr, fg, fb, br, bg, bb);
+        // printw("fr:%d,fg:%d,fb:%d,br:%d,bg:%d,bb:%d     \n", fr, fg, fb, br, bg, bb);
 
         Sleep(16);
     }

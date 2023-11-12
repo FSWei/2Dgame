@@ -8,10 +8,10 @@
 // 	for (int j = 0; j <= 255; j++)
 // 		for (int k = 0; k <= 255; k++)
 // 		{
-// 			// printf("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm%d:%d:%d.\x1B[0m\n", i, j, k, k, j, i, i, j, k);
-// 			printf("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm", i, j, k, k, j, i);
-// 			printf("%d:%d:%d\n", i, j, k);
-// 			printf("\x1B[0m");
+// 			// printw("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm%d:%d:%d.\x1B[0m\n", i, j, k, k, j, i, i, j, k);
+// 			printw("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm", i, j, k, k, j, i);
+// 			printw("%d:%d:%d\n", i, j, k);
+// 			printw("\x1B[0m");
 // 		}
 // }
 
@@ -46,7 +46,7 @@
 // 	csbi.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
 // 	GetConsoleScreenBufferInfoEx(hConsole, &csbi);
 
-// 	printf("%d\n", csbi.ColorTable[0]);
+// 	printw("%d\n", csbi.ColorTable[0]);
 // 	// 修改颜色表中的颜色值
 // 	csbi.ColorTable[0] = RGB(255, 165, 188);
 // 	csbi.ColorTable[1] = RGB(255, 165, 188);
@@ -68,8 +68,8 @@
 // 	// 应用修改后的颜色表和文本属性
 // 	SetConsoleScreenBufferInfoEx(hConsole, &csbi);
 
-// 	printf("%d\n", csbi.ColorTable[0]);
-// 	printf("%d\n", csbi.wAttributes);
+// 	printw("%d\n", csbi.ColorTable[0]);
+// 	printw("%d\n", csbi.wAttributes);
 
 // 	SetConsoleTextAttribute(hConsole, csbi.wAttributes);
 
@@ -117,11 +117,11 @@
 
 int main()
 {
-    printf("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm", 001, 001, 001, 255, 255, 255);
+    printw("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm", 001, 001, 001, 255, 255, 255);
     char s[32 * 16 * 42] = "\x1B[38;2;001;001;001m\x1B[48;2;255;255;255m";
-    printf("%d\n", strlen(s));
-    printf("%d\n", sizeof(s));
-    printf("%d:%d:%d\n", 1, 2, 3);
-    printf("\x1B[0m");
+    printw("%d\n", strlen(s));
+    printw("%d\n", sizeof(s));
+    printw("%d:%d:%d\n", 1, 2, 3);
+    printw("\x1B[0m");
     system("pause");
 }

@@ -62,21 +62,21 @@ void map::show()
             if (blocktype[i][j].type == WALL)
             {
                 SetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
-                printf("%c ", blocktype[i][j].type);
+                printw("%c ", blocktype[i][j].type);
                 UnsetColor();
             }
             else if (blocktype[i][j].type == BG)
             {
                 SetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
-                printf("%c ", blocktype[i][j].type);
+                printw("%c ", blocktype[i][j].type);
                 UnsetColor();
             }
             else
             {
-                printf("%c ", blocktype[i][j].type);
+                printw("%c ", blocktype[i][j].type);
             }
         }
-        printf("\n");
+        printw("\n");
     }
 }
 
@@ -101,11 +101,11 @@ void map::camera_show()
                 {
                     SetColor(Color(255, 255, 255), Color(0, 0, 0));
                 }
-                printf("%c ", blocktype[y][x].type);
+                printw("%c ", blocktype[y][x].type);
                 UnsetColor();
             }
         }
-        printf("\n");
+        printw("\n");
     }
 }
 
@@ -180,8 +180,8 @@ void background::show()
     {
         for (int j = 0; j < MAP_LENGTH; j++)
         {
-            printf("%c ", blocktype[i][j]);
+            printw("%c ", blocktype[i][j].type);
         }
-        printf("\n");
+        printw("\n");
     }
 }
