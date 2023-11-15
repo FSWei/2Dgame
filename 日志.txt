@@ -146,3 +146,26 @@ https://learn.microsoft.com/zh-cn/windows/console/console-screen-buffer-infoex#m
 
 2023/11/11 15:11
 守恒，不平衡则趋向毁灭
+
+2023/11/12 1:37
+I've found that in ncurses, after using init_color, all colors that appear on the screen are immediately changed to the newly defined ones. 
+So, I've abandoned the previous method of "calling init_color before printing each character and then applying the color" 
+and instead, during game initialization, I define all the colors I'll need, and then I directly use them when printing characters. 
+
+The first parameter of init_color and init_pair only supports the range 0-255
+
+Therefore, in terms of color change, ncurses are discarded and ansi escape sequences are used
+but ncurses doesn't supports ANSI!!!!!!!
+
+The getch of ncurses cannot detect multiple keys simultaneously and has latency, which is a fatal issue
+The solution is to use other libraries that can detect multiple keys simultaneously on Linux systems, 
+while separating keyboard detection on Windows and Linux
+
+Currently, we plan to first implement the existing functions using ncurses (without considering color scalability), 
+while also adding dual buffering function
+
+Rewrite to a version that supports full color in the future
+
+Adding Double Buffers
+
+Separate control modules under Linux and Windows

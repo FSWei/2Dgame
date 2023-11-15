@@ -10,7 +10,7 @@ std::mutex mtx;		// 使用互斥锁，避免因为两者同时渲染而出现的
 
 void win()
 {
-	SetColor(Color(255, 255, 255), Color(0, 0, 0));
+	SetColor(_255_255_255, _0_0_0);
 	// system("cls");
 	clear();
 	for (int i = 0; i < 11; i++)
@@ -33,12 +33,12 @@ void win()
 		}
 		printw("\n");
 	}
-	UnsetColor();
+	UnsetColor(_255_255_255, _0_0_0);
 }
 
 void lose()
 {
-	SetColor(Color(255, 255, 255), Color(0, 0, 0));
+	SetColor(_255_255_255, _0_0_0);
 	// system("cls");
 	clear();
 	for (int i = 0; i < 11; i++)
@@ -61,12 +61,12 @@ void lose()
 		}
 		printw("\n");
 	}
-	UnsetColor();
+	UnsetColor(_255_255_255, _0_0_0);
 }
 
 void print_data(player *p, enemy (*e)[MAXENEMY])
 {
-	SetColor(Color(255, 255, 255), Color(0, 0, 0));
+	SetColor(_255_255_255, _0_0_0);
 
 	// int tmp = 0;
 
@@ -130,7 +130,7 @@ void print_data(player *p, enemy (*e)[MAXENEMY])
 		move(TOP_BORDER + i, (LEFT_BORDER + CAMERA_LENGTH + RIGHT_BORDER) * 2);
 		printw("enemy%d.pos%d,%d    ", i, (*e)[i].pos.x, (*e)[i].pos.y);
 	}
-	UnsetColor();
+	UnsetColor(_255_255_255, _0_0_0);
 }
 
 void *updatePlayer(player *p)
@@ -248,7 +248,7 @@ void test()
 	std::thread playerThread(updatePlayer, &p);
 	std::thread enemyThread(updateEnemy, &e);
 	std::thread renderThread(render, &p, &e);
-	std::thread timerThread(timer, &p);   
+	std::thread timerThread(timer, &p);
 
 	playerThread.join();
 	enemyThread.join();
@@ -258,12 +258,15 @@ void test()
 
 int main()
 {
-	initscr();			   // 初始化ncurses
+	initscr(); // 初始化ncurses
 	start_color();
 	cbreak();			   // 禁用行缓冲
 	noecho();			   // 不在屏幕上显示按键
 	nodelay(stdscr, TRUE); // 设置非阻塞模式
 	keypad(stdscr, TRUE);  // 启用键盘特殊按键（如方向键）
+
+	InitAllcolor();
+
 	bool playAgain = true;
 
 	while (playAgain)

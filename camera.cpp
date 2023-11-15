@@ -50,7 +50,7 @@ void camera::renderObject(int x, int y, char object)
 
 void camera::showBorder()
 {
-    SetColor(Color(BORDER_COLOR), Color(BORDER_COLOR));
+    SetColor(BORDER_COLOR, BORDER_COLOR);
     // 上面
     for (int i = 0; i < TOP_BORDER; i++)
     {
@@ -94,5 +94,5 @@ void camera::showBorder()
             printw("  ");
         }
     }
-    UnsetColor();
+    UnsetColor(BORDER_COLOR, BORDER_COLOR);
 }

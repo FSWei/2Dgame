@@ -145,7 +145,7 @@ void player::render()
 {
     SetColor(foregroundcolor, backgroundcolor);
     c->renderObject(pos.x, pos.y, m->blocktype[pos.y][pos.x].type);
-    UnsetColor();
+    UnsetColor(foregroundcolor, backgroundcolor);
 }
 
 // int tmp = 1;
@@ -175,7 +175,7 @@ void player::camera_render()
                     SetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
                     // printw("%c ", m->blocktype[y][x].type);
                     c->renderObject(x, y, m->blocktype[y][x].type);
-                    UnsetColor();
+                    UnsetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
                 }
                 // printw("%c ", m->blocktype[y][x].type);//不可以写在这里，因为颜色
             }
@@ -196,12 +196,12 @@ void player::dash() // 冲刺突进技能
 {
     if (dash_cooling_time == 0)
     {
-        foregroundcolor = Color(255, 255, 255);
+        foregroundcolor = _255_255_255;
     }
     if (isdash == true && dash_cooling_time == 0) // 冲刺突进技能
     {
         dash_cooling_time = DASH_COOLING_TIME;
-        foregroundcolor = Color(255, 0, 255);
+        foregroundcolor = _255_0_255;
 
         if (istop == true && isjump == true) // 如果角色在冲刺时恰好在最高点并且按着跳跃键，则把ydirection设置成-1，让它仍能往上冲刺，而不是istop==true让ydirection=1
         {

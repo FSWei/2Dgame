@@ -2,7 +2,7 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "2dgame",
+            "label": "game",
             "command": "g++",
             "args": [
                 "-fdiagnostics-color=always",

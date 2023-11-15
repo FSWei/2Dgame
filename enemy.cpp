@@ -29,6 +29,6 @@ void enemy::render()
     {
         SetColor(foregroundcolor, backgroundcolor);
         c->renderObject(pos.x, pos.y, m->blocktype[pos.y][pos.x].type);
-        UnsetColor();
+        UnsetColor(foregroundcolor, backgroundcolor);
     }
 }

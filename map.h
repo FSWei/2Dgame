@@ -12,8 +12,8 @@ struct enemy;
 struct block
 {
     char type;
-    int foregroundcolor = Color(255,255,255);
-    int backgroundcolor = Color(0, 0, 0);
+    int foregroundcolor = _255_255_255;
+    int backgroundcolor = _0_0_0;
 };
 
 struct map

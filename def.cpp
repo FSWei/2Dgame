@@ -48,23 +48,38 @@ int Color(int r, int g, int b)
     return r << 20 | g << 10 | b;
 }
 
-void SetColor(int foregroundcolor, int backgroundcolor)
+void InitColor(int colornum, int color)
 {
     // 定义颜色
-    init_color(1, ((foregroundcolor >> 20) & 1023) * 1000 / 255, ((foregroundcolor >> 10) & 1023) * 1000 / 255, (foregroundcolor & 1023) * 1000 / 255);
-    init_color(2, ((backgroundcolor >> 20) & 1023) * 1000 / 255, ((backgroundcolor >> 10) & 1023) * 1000 / 255, (backgroundcolor & 1023) * 1000 / 255);
-
-    // 定义颜色对
-    init_pair(1, 1, 2);
-
-    // 应用颜色对
-    attron(COLOR_PAIR(1));
+    init_color(colornum, ((color >> 20) & 1023) * 1000 / 255, ((color >> 10) & 1023) * 1000 / 255, (color & 1023) * 1000 / 255);
 }
 
-void UnsetColor()
+void InitAllcolor()
+{
+    InitColor(_0_0_0, Color(0, 0, 0));
+    InitColor(_255_255_255, Color(255, 255, 255));
+    InitColor(_0_100_20, Color(0, 100, 20));
+    InitColor(_0_0_255, Color(0, 0, 255));
+    InitColor(_255_0_0, Color(255, 0, 0));
+    InitColor(_255_0_255, Color(255, 0, 255));
+    InitColor(_255_255_0, Color(255, 255, 0));
+    InitColor(_0_255_0, Color(0, 255, 0));
+}
+
+//Only applicable when the total number of colors is less than 10,
+//because the first parameter of init_color and init_pair only supports the range 0-255
+void SetColor(int foregroundcolor, int backgroundcolor)
+{
+    // 定义颜色对
+    init_pair((foregroundcolor << 4) | backgroundcolor, foregroundcolor, backgroundcolor);
+    // 应用颜色对
+    attron(COLOR_PAIR((foregroundcolor << 4) | backgroundcolor));
+}
+
+void UnsetColor(int foregroundcolor, int backgroundcolor)
 {
     // 关闭颜色对
-    attroff(COLOR_PAIR(1));
+    attroff(COLOR_PAIR((foregroundcolor << 4) | backgroundcolor));
 }
 
 int _time = 0;

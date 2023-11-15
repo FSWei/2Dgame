@@ -19,8 +19,8 @@ struct player
     enemy *e[MAXENEMY];
 
     char name = PLAYER;
-    int foregroundcolor = Color(255, 255, 255); // 前景颜色，默认为白色
-    int backgroundcolor = Color(0, 255, 0);     // 背景颜色，默认为绿色
+    int foregroundcolor = _255_255_255; // 前景颜色，默认为白色
+    int backgroundcolor = _0_255_0;     // 背景颜色，默认为绿色
     char preblock = BG;
     pos_ pos = {2, MAP_HEIGHT - 2};
     pos_ v = {0, 0};                    // 速度

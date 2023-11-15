@@ -42,12 +42,12 @@ void map::init()
         {
             if (blocktype[i][j].type == WALL)
             {
-                blocktype[i][j].foregroundcolor = Color(0, 0, 255);
-                blocktype[i][j].backgroundcolor = Color(0, 0, 255);
+                blocktype[i][j].foregroundcolor = _0_0_255;
+                blocktype[i][j].backgroundcolor = _0_0_255;
             }
             else if (blocktype[i][j].type == FLAG)
             {
-                blocktype[i][j].foregroundcolor = Color(255, 255, 0);
+                blocktype[i][j].foregroundcolor = _255_255_0;
             }
         }
     }
@@ -63,13 +63,13 @@ void map::show()
             {
                 SetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
                 printw("%c ", blocktype[i][j].type);
-                UnsetColor();
+                UnsetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
             }
             else if (blocktype[i][j].type == BG)
             {
                 SetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
                 printw("%c ", blocktype[i][j].type);
-                UnsetColor();
+                UnsetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
             }
             else
             {
@@ -89,20 +89,28 @@ void map::camera_show()
             if (p->c->isInsideCamera(x, y)) // 检查坐标是否在C范围内
             {
                 // gotoxy((x - p->c->left) * 2, y - p->c->top);
+                int f = -1, b = -1;
                 if (blocktype[y][x].type == WALL)
                 {
-                    SetColor(blocktype[y][x].foregroundcolor, blocktype[y][x].backgroundcolor);
+                    f = blocktype[y][x].foregroundcolor;
+                    b = blocktype[y][x].backgroundcolor;
+                    // SetColor(blocktype[y][x].foregroundcolor, blocktype[y][x].backgroundcolor);
                 }
                 else if (blocktype[y][x].type == BG)
                 {
-                    SetColor(blocktype[y][x].foregroundcolor, blocktype[y][x].backgroundcolor);
+                    f = blocktype[y][x].foregroundcolor;
+                    b = blocktype[y][x].backgroundcolor;
+                    // SetColor(blocktype[y][x].foregroundcolor, blocktype[y][x].backgroundcolor);
                 }
                 else
                 {
-                    SetColor(Color(255, 255, 255), Color(0, 0, 0));
+                    f = _255_255_255;
+                    b = _0_0_0;
+                    // SetColor(_255_255_255, _0_0_0);
                 }
+                SetColor(f, b);
                 printw("%c ", blocktype[y][x].type);
-                UnsetColor();
+                UnsetColor(f, b);
             }
         }
         printw("\n");
@@ -152,8 +160,8 @@ background::background()
                 blocktype[i][j].type = tmp[i][j];
                 if (blocktype[i][j].type == '.')
                 {
-                    blocktype[i][j].foregroundcolor = Color(0, 100, 20);
-                    blocktype[i][j].backgroundcolor = Color(0, 100, 20);
+                    blocktype[i][j].foregroundcolor = _0_100_20;
+                    blocktype[i][j].backgroundcolor = _0_100_20;
                 }
             }
         }
