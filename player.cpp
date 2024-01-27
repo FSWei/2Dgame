@@ -23,24 +23,45 @@ void player::input()
     // {
     //     isdash = true;
     // }
+    
 
-    ch = getch(); // 获取当前按键
+    // ch = getch(); // 获取当前按键
 
-    if (ch == 'w' || ch == KEY_UP) // 对应 W 键或向上箭头键
+    // if (ch == 'w' || ch == KEY_UP) // 对应 W 键或向上箭头键
+    // {
+
+    //     isjump = true;
+    // }
+    // if (ch == 'd' || ch == KEY_RIGHT) // 对应 D 键或向右箭头键
+    // {
+    //     iswalk = true;
+    //     xdirection = RIGHT;
+    // }
+    // else if (ch == 'a' || ch == KEY_LEFT) // 对应 A 键或向左箭头键
+    // {
+    //     iswalk = true;
+    //     xdirection = LEFT;
+    // }
+    // if (ch == 'j') // 对应 J 键
+    // {
+    //     isdash = true;
+    // }
+
+    if (key_state[17]||key_state[103]) // 对应 W 键或向上箭头键
     {
         isjump = true;
     }
-    else if (ch == 'd' || ch == KEY_RIGHT) // 对应 D 键或向右箭头键
+    if (key_state[32]||key_state[106]) // 对应 D 键或向右箭头键
     {
         iswalk = true;
         xdirection = RIGHT;
     }
-    else if (ch == 'a' || ch == KEY_LEFT) // 对应 A 键或向左箭头键
+    else if (key_state[30]||key_state[105]) // 对应 A 键或向左箭头键
     {
         iswalk = true;
         xdirection = LEFT;
     }
-    else if (ch == 'j') // 对应 J 键
+    if (key_state[36]) // 对应 J 键
     {
         isdash = true;
     }
@@ -72,7 +93,7 @@ int player::update()
         hop_count--;
     }
     // else if (isair && !(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // 如果角色浮空并且没有按W或上，则一直下降
-    else if (isair && !(ch == 'w' || ch == KEY_UP))
+    else if (isair && !(key_state[17]||key_state[103]))
     {
         istop = true;
         ydirection = DOWN;
@@ -94,19 +115,19 @@ int player::update()
 
     // 如果左键右键a键d键都松开，iswalk = false
     // if (!(GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000 || GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000))
-    if (!(ch == 'a' || ch == KEY_LEFT || ch == 'd' || ch == KEY_RIGHT))
+    if (!(key_state[30]||key_state[105]||key_state[32]||key_state[106]))
     {
         iswalk = false;
     }
     // 如果上键松开，isjump = false
     // if (!(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000))
-    if (!(ch == 'w' || ch == KEY_UP))
+    if (!(key_state[17]||key_state[103]))
     {
         isjump = false;
     }
     // 如果j键松开，jsdash=false
     // if (!(GetAsyncKeyState(0x4A) & 0x8000))
-    if (!(ch == 'j'))
+    if (!(key_state[36]))
     {
         isdash = false;
     }

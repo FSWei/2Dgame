@@ -115,7 +115,7 @@ void print_data(player *p, enemy (*e)[MAXENEMY])
 	printw("istop:%d,isair:%d,isjump:%d,iswalk:%d,isdash:%d     ", p->istop, p->isair, p->isjump, p->iswalk, p->isdash);
 
 	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
-	printw("time:%d,ch:%d\\%c   ", _time, ch, ch);
+	printw("time:%d   ", _time);
 
 	move(TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++, LEFT_BORDER * 2);
 	printw("c.left:%d,c.top:%d    ", p->c->left, p->c->top);
@@ -186,12 +186,16 @@ void *render(player *p, enemy (*e)[MAXENEMY])
 		{
 			gamestatus = 0; // 游戏结束
 			win();
+					printw("Game over! Play again? (Y/N): ");
 		}
 		else if (iswin == 0)
 		{
 			gamestatus = 0;
 			lose();
+					printw("Game over! Play again? (Y/N): ");
 		}
+
+		refresh();
 
 		usleep(p->c->updatetime);
 	}
@@ -206,6 +210,81 @@ void *timer(player *p) // 计时器
 		p->timer();
 		usleep(1000000); // 一秒
 	}
+	return NULL;
+}
+
+void *keyboardCheck()
+{
+	// 打开第一个键盘设备
+    int fd_keyboard1 = open(KEYBOARD_DEVICE_1, O_RDONLY);
+    if (fd_keyboard1 == -1) {
+        perror("open keyboard device 1 failed");
+        return NULL;
+    }
+
+    // 打开第二个键盘设备
+    int fd_keyboard2 = open(KEYBOARD_DEVICE_2, O_RDONLY);
+    if (fd_keyboard2 == -1) {
+        perror("open keyboard device 2 failed");
+        close(fd_keyboard1);
+        return NULL;
+    }
+
+    // 使用 select 实现同时检测键盘输入
+    fd_set readfds;
+    FD_ZERO(&readfds);
+    FD_SET(fd_keyboard1, &readfds);
+    FD_SET(fd_keyboard2, &readfds);
+    int maxfd = (fd_keyboard1 > fd_keyboard2) ? fd_keyboard1 : fd_keyboard2;
+
+    struct input_event ev;
+    ssize_t ret;
+    while (gamestatus) {
+        ret = select(maxfd + 1, &readfds, NULL, NULL, NULL);
+        if (ret == -1) {
+            perror("select error");
+            break;
+        } else if (ret > 0) {
+            if (FD_ISSET(fd_keyboard1, &readfds)) {
+                ret = read(fd_keyboard1, &ev, sizeof(ev));
+                if (ret == sizeof(ev) && ev.type == EV_KEY) {
+                    if (ev.value == 1)
+                        key_state[ev.code] = 1; // 按键按下，状态设置为1
+                    else if (ev.value == 0)
+                        key_state[ev.code] = 0; // 按键释放，状态设置为0
+                }
+            }
+
+            if (FD_ISSET(fd_keyboard2, &readfds)) {
+                ret = read(fd_keyboard2, &ev, sizeof(ev));
+                if (ret == sizeof(ev) && ev.type == EV_KEY) {
+                    if (ev.value == 1)
+                        key_state[ev.code] = 1; // 按键按下，状态设置为1
+                    else if (ev.value == 0)
+                        key_state[ev.code] = 0; // 按键释放，状态设置为0
+                }
+            }
+        }
+
+        // 清空文件描述符集合
+        FD_ZERO(&readfds);
+        FD_SET(fd_keyboard1, &readfds);
+        FD_SET(fd_keyboard2, &readfds);
+
+		// usleep(1000);
+    }
+
+	// set all key_state to 0
+
+	for(int i = 0; i< MAX_KEYCODE+1;i++)
+	{
+		key_state[i] = 0;
+	}
+
+    // 关闭文件描述符
+    close(fd_keyboard1);
+    close(fd_keyboard2);
+
 	return NULL;
 }
 
@@ -245,11 +324,13 @@ void test()
 	// 展示初始camera图像
 	// m.camera_show();
 
+	std::thread keyboardThread(keyboardCheck);
 	std::thread playerThread(updatePlayer, &p);
 	std::thread enemyThread(updateEnemy, &e);
 	std::thread renderThread(render, &p, &e);
 	std::thread timerThread(timer, &p);
 
+	keyboardThread.join();
 	playerThread.join();
 	enemyThread.join();
 	renderThread.join();
@@ -284,8 +365,6 @@ int main()
 		gamestatus = 1;
 		// ShowConsoleCursor();//显示光标
 
-		printw("Game over! Play again? (Y/N): ");
-
 		// FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE)); // 清空输入缓冲区
 
 		char choice = 0;
@@ -296,6 +375,10 @@ int main()
 		if (choice == 'N' || choice == 'n')
 		{
 			playAgain = false;
+		}
+		else if (choice =='Y' || choice =='y')
+		{
+			playAgain = true;
 		}
 	}
 

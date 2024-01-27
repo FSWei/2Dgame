@@ -84,3 +84,4 @@ void UnsetColor(int foregroundcolor, int backgroundcolor)
 
 int _time = 0;
 int ch = ERR;
+int key_state[MAX_KEYCODE + 1] = {0};
