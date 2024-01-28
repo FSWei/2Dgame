@@ -62,21 +62,21 @@ void map::show()
             if (blocktype[i][j].type == WALL)
             {
                 SetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
-                printw("%c ", blocktype[i][j].type);
+                PRINT("%c ", blocktype[i][j].type);
                 UnsetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
             }
             else if (blocktype[i][j].type == BG)
             {
                 SetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
-                printw("%c ", blocktype[i][j].type);
+                PRINT("%c ", blocktype[i][j].type);
                 UnsetColor(blocktype[i][j].foregroundcolor, blocktype[i][j].backgroundcolor);
             }
             else
             {
-                printw("%c ", blocktype[i][j].type);
+                PRINT("%c ", blocktype[i][j].type);
             }
         }
-        printw("\n");
+        PRINT("\n");
     }
 }
 
@@ -88,7 +88,7 @@ void map::camera_show()
         {
             if (p->c->isInsideCamera(x, y)) // 检查坐标是否在C范围内
             {
-                // gotoxy((x - p->c->left) * 2, y - p->c->top);
+                // MOVECURSOR((x - p->c->left) * 2, y - p->c->top);
                 int f = -1, b = -1;
                 if (blocktype[y][x].type == WALL)
                 {
@@ -109,11 +109,11 @@ void map::camera_show()
                     // SetColor(_255_255_255, _0_0_0);
                 }
                 SetColor(f, b);
-                printw("%c ", blocktype[y][x].type);
+                PRINT("%c ", blocktype[y][x].type);
                 UnsetColor(f, b);
             }
         }
-        printw("\n");
+        PRINT("\n");
     }
 }
 
@@ -188,8 +188,8 @@ void background::show()
     {
         for (int j = 0; j < MAP_LENGTH; j++)
         {
-            printw("%c ", blocktype[i][j].type);
+            PRINT("%c ", blocktype[i][j].type);
         }
-        printw("\n");
+        PRINT("\n");
     }
 }

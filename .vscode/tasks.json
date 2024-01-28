@@ -9,8 +9,11 @@
                 "-g",
                 "*.cpp",
                 "-o",
-                "${fileDirname}/exe/game",
-                "-lncurses"
+                //windows系统要加上.exe
+                "${fileDirname}/exe/game.exe",
+                //如果是linux系统，需要加上-lncurses
+                // "${fileDirname}/exe/game",
+                // "-lncurses"
             ],
             "options": {
                 "cwd": "${fileDirname}"

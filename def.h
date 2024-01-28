@@ -3,18 +3,40 @@
 
 #include <stdio.h>
 #include <time.h>
-// #include <Windows.h>
-#include <ncursesw/ncurses.h>
 #include <vector>
 #include <tuple>
 #include <thread>
 #include <unistd.h>
 #include <mutex>
 
+#ifdef _WIN32
+
+#include <Windows.h>
+#define MOVECURSOR(x,y) gotoxy(x,y)
+#define PRINT printf
+#define CLEARWINDOW system("cls")
+
+#elif __linux__
+
+#include <ncursesw/ncurses.h>
 #include <fcntl.h>
 #include <termios.h>
 #include <sys/select.h>
 #include <linux/input.h>
+
+#define MOVECURSOR(x,y) move(y,x)
+#define PRINT PRINT
+#define CLEARWINDOW clear()
+
+// 不确定具体要监听哪个键盘，所以都写上，然后后面去比较，哪个大就用哪个
+#define KEYBOARD_DEVICE_1 "/dev/input/event0"
+#define KEYBOARD_DEVICE_2 "/dev/input/event1"
+
+#define MAX_KEYCODE 255 // 最大键码值
+
+extern int key_state[MAX_KEYCODE + 1]; // 全局数组，记录键盘按键状态，初始值为0
+
+#endif
 
 // 代表各种元素的字符
 #define PLAYER 'P'
@@ -40,12 +62,6 @@
 #define PLAYER_UPDATETIME 100000 // player更新间隔时间
 #define DASH_DISTANCE 5          // 突进距离
 #define DASH_COOLING_TIME 5      // 突进冷却时间
-
-// 不确定具体要监听哪个键盘，所以都写上，然后后面去比较，哪个大就用哪个
-#define KEYBOARD_DEVICE_1 "/dev/input/event0"
-#define KEYBOARD_DEVICE_2 "/dev/input/event1"
-
-#define MAX_KEYCODE 255 // 最大键码值
 
 enum
 {
@@ -85,17 +101,16 @@ struct pos_
     int y;
 };
 
-// extern void gotoxy(int x, int y);
-// extern void HideConsoleCursor();
-// extern void ShowConsoleCursor();
+#ifdef _WIN32
+extern void gotoxy(int x, int y);
+extern void HideConsoleCursor();
+extern void ShowConsoleCursor();
+#endif
 extern int Color(int r, int g, int b);          // 打包颜色
 extern void InitColor(int color, int colornum); // 初始化颜色
 extern void InitAllcolor();                     // 初始化所有颜色
 extern void SetColor(int foregroundcolor, int backgroundcolor);
 extern void UnsetColor(int foregroundcolor, int backgroundcolor);
 extern int _time; // 游戏时间
-
-extern int ch;
-extern int key_state[MAX_KEYCODE + 1]; // 全局数组，记录键盘按键状态，初始值为0
 
 #endif

@@ -110,7 +110,7 @@ int main()
 
     while (isRunning)
     {
-        // gotoxy(0,0)
+        MOVECURSOR(0,0)
         COORD pos = {(short)0, (short)0};
         HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleCursorPosition(hOut, pos);

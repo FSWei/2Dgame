@@ -42,9 +42,9 @@ void camera::renderObject(int x, int y, char object)
 {
     if (isInsideCamera(x, y))
     {
-        // gotoxy((LEFT_BORDER + (x - left)) * 2, TOP_BORDER + (y - top));
-        move(TOP_BORDER + (y - top), (LEFT_BORDER + (x - left)) * 2);
-        printw("%c ", object);
+        MOVECURSOR((LEFT_BORDER + (x - left)) * 2, TOP_BORDER + (y - top));
+        
+        PRINT("%c ", object);
     }
 }
 
@@ -54,44 +54,40 @@ void camera::showBorder()
     // 上面
     for (int i = 0; i < TOP_BORDER; i++)
     {
-        // gotoxy(0, i);
-        move(i, 0);
+        MOVECURSOR(0, i);
         for (int j = 0; j < LEFT_BORDER + CAMERA_LENGTH + RIGHT_BORDER; j++)
         {
-            printw("  ");
+            PRINT("  ");
         }
     }
 
     // 下面
     for (int i = TOP_BORDER + CAMERA_HEIGHT; i < TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER; i++)
     {
-        // gotoxy(0, i);
-        move(i, 0);
+        MOVECURSOR(0, i);
         for (int j = 0; j < LEFT_BORDER + CAMERA_LENGTH + RIGHT_BORDER; j++)
         {
-            printw("  ");
+            PRINT("  ");
         }
     }
 
     // 左边
     for (int i = TOP_BORDER; i < TOP_BORDER + CAMERA_HEIGHT; i++)
     {
-        // gotoxy(0, i);
-        move(i, 0);
+        MOVECURSOR(0, i);
         for (int j = 0; j < LEFT_BORDER; j++)
         {
-            printw("  ");
+            PRINT("  ");
         }
     }
 
     // 右边
     for (int i = TOP_BORDER; i < TOP_BORDER + CAMERA_HEIGHT; i++)
     {
-        // gotoxy((LEFT_BORDER + CAMERA_LENGTH) * 2, i);
-        move(i, (LEFT_BORDER + CAMERA_LENGTH) * 2);
+        MOVECURSOR((LEFT_BORDER + CAMERA_LENGTH) * 2, i);
         for (int j = LEFT_BORDER + CAMERA_LENGTH; j < LEFT_BORDER + CAMERA_LENGTH + RIGHT_BORDER; j++)
         {
-            printw("  ");
+            PRINT("  ");
         }
     }
     UnsetColor(BORDER_COLOR, BORDER_COLOR);

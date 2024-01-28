@@ -2,61 +2,42 @@
 
 void player::input()
 {
-    // if ((GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // w、↑
-    // {
-    //     isjump = true;
-    // }
+#ifdef _WIN32
 
-    // if ((GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000)) // d、→
-    // {
-    //     iswalk = true;
-    //     xdirection = RIGHT;
-    // }
-
-    // else if ((GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000)) // a、←
-    // {
-    //     iswalk = true;
-    //     xdirection = LEFT;
-    // }
-
-    // if (GetAsyncKeyState(0x4A) & 0x8000) // j
-    // {
-    //     isdash = true;
-    // }
-    
-
-    // ch = getch(); // 获取当前按键
-
-    // if (ch == 'w' || ch == KEY_UP) // 对应 W 键或向上箭头键
-    // {
-
-    //     isjump = true;
-    // }
-    // if (ch == 'd' || ch == KEY_RIGHT) // 对应 D 键或向右箭头键
-    // {
-    //     iswalk = true;
-    //     xdirection = RIGHT;
-    // }
-    // else if (ch == 'a' || ch == KEY_LEFT) // 对应 A 键或向左箭头键
-    // {
-    //     iswalk = true;
-    //     xdirection = LEFT;
-    // }
-    // if (ch == 'j') // 对应 J 键
-    // {
-    //     isdash = true;
-    // }
-
-    if (key_state[17]||key_state[103]) // 对应 W 键或向上箭头键
+    if ((GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // w、↑
     {
         isjump = true;
     }
-    if (key_state[32]||key_state[106]) // 对应 D 键或向右箭头键
+
+    if ((GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000)) // d、→
     {
         iswalk = true;
         xdirection = RIGHT;
     }
-    else if (key_state[30]||key_state[105]) // 对应 A 键或向左箭头键
+
+    else if ((GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000)) // a、←
+    {
+        iswalk = true;
+        xdirection = LEFT;
+    }
+
+    if (GetAsyncKeyState(0x4A) & 0x8000) // j
+    {
+        isdash = true;
+    }
+
+#elif __linux__
+
+    if (key_state[17] || key_state[103]) // 对应 W 键或向上箭头键
+    {
+        isjump = true;
+    }
+    if (key_state[32] || key_state[106]) // 对应 D 键或向右箭头键
+    {
+        iswalk = true;
+        xdirection = RIGHT;
+    }
+    else if (key_state[30] || key_state[105]) // 对应 A 键或向左箭头键
     {
         iswalk = true;
         xdirection = LEFT;
@@ -65,6 +46,8 @@ void player::input()
     {
         isdash = true;
     }
+
+#endif
 }
 
 int player::update()
@@ -92,8 +75,12 @@ int player::update()
         ydirection = DOWN;
         hop_count--;
     }
-    // else if (isair && !(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // 如果角色浮空并且没有按W或上，则一直下降
-    else if (isair && !(key_state[17]||key_state[103]))
+
+#ifdef _WIN32
+    else if (isair && !(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // 如果角色浮空并且没有按W或上，则一直下降
+#elif __linux__
+    else if (isair && !(key_state[17] || key_state[103]))
+#endif
     {
         istop = true;
         ydirection = DOWN;
@@ -114,20 +101,29 @@ int player::update()
     dash();
 
     // 如果左键右键a键d键都松开，iswalk = false
-    // if (!(GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000 || GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000))
-    if (!(key_state[30]||key_state[105]||key_state[32]||key_state[106]))
+#ifdef _WIN32
+    if (!(GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000 || GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000))
+#elif __linux__
+    if (!(key_state[30] || key_state[105] || key_state[32] || key_state[106]))
+#endif
     {
         iswalk = false;
     }
     // 如果上键松开，isjump = false
-    // if (!(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000))
-    if (!(key_state[17]||key_state[103]))
+#ifdef _WIN32
+    if (!(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000))
+#elif __linux__
+    if (!(key_state[17] || key_state[103]))
+#endif
     {
         isjump = false;
     }
     // 如果j键松开，jsdash=false
-    // if (!(GetAsyncKeyState(0x4A) & 0x8000))
+#ifdef _WIN32
+    if (!(GetAsyncKeyState(0x4A) & 0x8000))
+#elif __linux__
     if (!(key_state[36]))
+#endif
     {
         isdash = false;
     }
@@ -179,11 +175,11 @@ void player::camera_render()
         {
             if (c->isInsideCamera(x, y)) // 检查坐标是否在C范围内
             {
-                // gotoxy((LEFT_BORDER + (x - c->left)) * 2, TOP_BORDER + (y - c->top));
+                // MOVECURSOR((LEFT_BORDER + (x - c->left)) * 2, TOP_BORDER + (y - c->top));
                 if (m->blocktype[y][x].type == PLAYER)
                 {
                     // SetColor(foregroundcolor , backgroundcolor);
-                    // printw("%c ", m->blocktype[y][x].type);
+                    // PRINT("%c ", m->blocktype[y][x].type);
                     // UnsetColor();
                 }
                 else if (m->blocktype[y][x].type == ENEMY)
@@ -194,11 +190,11 @@ void player::camera_render()
                 else
                 {
                     SetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
-                    // printw("%c ", m->blocktype[y][x].type);
+                    // PRINT("%c ", m->blocktype[y][x].type);
                     c->renderObject(x, y, m->blocktype[y][x].type);
                     UnsetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
                 }
-                // printw("%c ", m->blocktype[y][x].type);//不可以写在这里，因为颜色
+                // PRINT("%c ", m->blocktype[y][x].type);//不可以写在这里，因为颜色
             }
         }
     }
