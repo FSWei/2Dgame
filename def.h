@@ -25,7 +25,7 @@
 #include <linux/input.h>
 
 #define MOVECURSOR(x,y) move(y,x)
-#define PRINT PRINT
+#define PRINT printw
 #define CLEARWINDOW clear()
 
 // 不确定具体要监听哪个键盘，所以都写上，然后后面去比较，哪个大就用哪个

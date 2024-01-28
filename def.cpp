@@ -88,7 +88,7 @@ void SetColor(int foregroundcolor, int backgroundcolor)
     short bb = b & 1023;         // 获取后 10 位
 
     PRINT("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm", fr, fg, fb, br, bg, bb);
-#elif
+#elif __linux__
     // 定义颜色对。（foregroundcolor << 4) | backgroundcolor可以当作键来对待，它对应前景和背景两个值）
     init_pair((foregroundcolor << 4) | backgroundcolor, foregroundcolor, backgroundcolor);
     // 应用颜色对
