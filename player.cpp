@@ -1,145 +1,16 @@
 #include "player.h"
 
-void player::input()
-{
-#ifdef _WIN32
-
-    if ((GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // w、↑
-    {
-        isjump = true;
-    }
-
-    if ((GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000)) // d、→
-    {
-        iswalk = true;
-        xdirection = RIGHT;
-    }
-
-    else if ((GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000)) // a、←
-    {
-        iswalk = true;
-        xdirection = LEFT;
-    }
-
-    if (GetAsyncKeyState(0x4A) & 0x8000) // j
-    {
-        isdash = true;
-    }
-
-#elif __linux__
-
-    if (key_state[17] || key_state[103]) // 对应 W 键或向上箭头键
-    {
-        isjump = true;
-    }
-    if (key_state[32] || key_state[106]) // 对应 D 键或向右箭头键
-    {
-        iswalk = true;
-        xdirection = RIGHT;
-    }
-    else if (key_state[30] || key_state[105]) // 对应 A 键或向左箭头键
-    {
-        iswalk = true;
-        xdirection = LEFT;
-    }
-    if (key_state[36]) // 对应 J 键
-    {
-        isdash = true;
-    }
-
-#endif
-}
-
 int player::update()
 {
-    if (iswalk == true)
-        v.x = 1;
-    else
-        v.x = 0;
-
-    if (m->blocktype[pos.y + 1][pos.x].type == WALL) // 如果下面是障碍物，代表角色站在地上，既不浮空也没到顶，跳跃次数为0
-    {
-        isair = false;
-        v.y = 0;
-        istop = false;
-        hop_count = 0;
-    }
-    else // 如果没有障碍物，表示浮空
-    {
-        isair = true;
-        v.y = 1;
-    }
-    if (istop || m->blocktype[pos.y - 1][pos.x].type == WALL) // 如果角色跳跃到最高点或者角色上面碰到墙，直接下落
-    {
-        istop = true;
-        ydirection = DOWN;
-        hop_count--;
-    }
-
-#ifdef _WIN32
-    else if (isair && !(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // 如果角色浮空并且没有按W或上，则一直下降
-#elif __linux__
-    else if (isair && !(key_state[17] || key_state[103]))
-#endif
-    {
-        istop = true;
-        ydirection = DOWN;
-        hop_count--;
-    }
-    if (m->blocktype[pos.y - 1][pos.x].type != WALL && !istop && isjump == true) // 如果角色上面没有障碍物并且角色没有到达最高点并且按了W或上
-    {
-        isair = true;
-        v.y = 1;
-        hop_count++;
-        ydirection = UP;
-        if (hop_count == MAXHOP)
-        {
-            istop = true;
-        }
-    }
-
+    move();
     dash();
-
-    // 如果左键右键a键d键都松开，iswalk = false
-#ifdef _WIN32
-    if (!(GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000 || GetAsyncKeyState(0x41) & 0x8000 || GetAsyncKeyState(0x25) & 0x8000))
-#elif __linux__
-    if (!(key_state[30] || key_state[105] || key_state[32] || key_state[106]))
-#endif
-    {
-        iswalk = false;
-    }
-    // 如果上键松开，isjump = false
-#ifdef _WIN32
-    if (!(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000))
-#elif __linux__
-    if (!(key_state[17] || key_state[103]))
-#endif
-    {
-        isjump = false;
-    }
-    // 如果j键松开，jsdash=false
-#ifdef _WIN32
-    if (!(GetAsyncKeyState(0x4A) & 0x8000))
-#elif __linux__
-    if (!(key_state[36]))
-#endif
-    {
-        isdash = false;
-    }
-
-    // 如果下一个位置有墙，则停止纵向移动
-    if (m->blocktype[pos.y + v.y * ydirection][pos.x + v.x * xdirection].type == WALL)
-    {
-        v.x = 0;
-    }
     // 如果下一个位置是flag，判胜
-    if (m->blocktype[pos.y + v.y * ydirection][pos.x + v.x * xdirection].type == FLAG)
+    if (iscoincide(pos.y + v.y * ydirection, pos.x + v.x * xdirection, FLAG))
     {
         return 1;
     }
     // 如果下一个位置是enemy，判负
-    if (m->blocktype[pos.y + v.y * ydirection][pos.x + v.x * xdirection].type == ENEMY)
+    if (iscoincide(pos.y + v.y * ydirection, pos.x + v.x * xdirection, ENEMY))
     {
         return 0;
     }
@@ -165,47 +36,70 @@ void player::render()
     UnsetColor(foregroundcolor, backgroundcolor);
 }
 
-// int tmp = 1;
-// 这个全图渲染暂时放在这里
-void player::camera_render()
+bool player::iscoincide(int y, int x, int object2)
 {
-    for (int y = c->top; y < c->top + c->height; y++)
+    if (m->blocktype[y][x].type == object2)
     {
-        for (int x = c->left; x < c->left + c->width; x++)
-        {
-            if (c->isInsideCamera(x, y)) // 检查坐标是否在C范围内
-            {
-                // MOVECURSOR((LEFT_BORDER + (x - c->left)) * 2, TOP_BORDER + (y - c->top));
-                if (m->blocktype[y][x].type == PLAYER)
-                {
-                    // SetColor(foregroundcolor , backgroundcolor);
-                    // PRINT("%c ", m->blocktype[y][x].type);
-                    // UnsetColor();
-                }
-                else if (m->blocktype[y][x].type == ENEMY)
-                {
-                    // SetColor(e[0]->foregroundcolor | e[0]->backgroundcolor);
-                    // UnsetColor();
-                }
-                else
-                {
-                    SetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
-                    // PRINT("%c ", m->blocktype[y][x].type);
-                    c->renderObject(x, y, m->blocktype[y][x].type);
-                    UnsetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
-                }
-                // PRINT("%c ", m->blocktype[y][x].type);//不可以写在这里，因为颜色
-            }
-        }
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
-void player::timer()
+void player::move() // 移动
 {
-    _time++;
-    if (dash_cooling_time > 0)
+    if (isWalking == true)
+        v.x = 1;
+    else
+        v.x = 0;
+
+    if (iscoincide(pos.y + 1, pos.x, WALL)) // 如果下面是障碍物，代表角色站在地上，既不浮空也没到顶，跳跃次数为0
     {
-        dash_cooling_time--;
+        isAirborne = false;
+        v.y = 0;
+        isTopReached = false;
+        hop_count = 0;
+    }
+    else // 如果没有障碍物，表示浮空
+    {
+        isAirborne = true;
+        v.y = 1;
+    }
+    if (isTopReached || iscoincide(pos.y - 1, pos.x, WALL)) // 如果角色跳跃到最高点或者角色上面碰到墙，直接下落
+    {
+        isTopReached = true;
+        ydirection = DOWN;
+        hop_count--;
+    }
+
+#ifdef _WIN32
+    else if (isAirborne && !(GetAsyncKeyState(0x57) & 0x8000 || GetAsyncKeyState(0x26) & 0x8000)) // 如果角色浮空并且没有按W或上，则一直下降
+#elif __linux__
+    else if (isAirborne && !(key_state[17] || key_state[103]))
+#endif
+    {
+        isTopReached = true;
+        ydirection = DOWN;
+        hop_count--;
+    }
+    if (!(iscoincide(pos.y - 1, pos.x, WALL)) && !isTopReached && isJumping == true) // 如果角色上面没有障碍物并且角色没有到达最高点并且按了W或上
+    {
+        isAirborne = true;
+        v.y = 1;
+        hop_count++;
+        ydirection = UP;
+        if (hop_count == MAXHOP)
+        {
+            isTopReached = true;
+        }
+    }
+
+    // 如果下一个位置有墙，则停止纵向移动
+    if (iscoincide(pos.y + v.y * ydirection, pos.x + v.x * xdirection, WALL))
+    {
+        v.x = 0;
     }
 }
 
@@ -220,7 +114,7 @@ void player::dash() // 冲刺突进技能
         dash_cooling_time = DASH_COOLING_TIME;
         foregroundcolor = _255_0_255;
 
-        if (istop == true && isjump == true) // 如果角色在冲刺时恰好在最高点并且按着跳跃键，则把ydirection设置成-1，让它仍能往上冲刺，而不是istop==true让ydirection=1
+        if (isTopReached == true && isJumping == true) // 如果角色在冲刺时恰好在最高点并且按着跳跃键，则把ydirection设置成-1，让它仍能往上冲刺，而不是isTopReached==true让ydirection=1
         {
             ydirection = -1;
         }
@@ -243,7 +137,7 @@ void player::dash() // 冲刺突进技能
                 tmp = 0;
                 break;
             }
-            if (m->blocktype[pos.y + y * ydirection][pos.x + x * xdirection].type == WALL)
+            if (iscoincide(pos.y + y * ydirection, pos.x + x * xdirection, WALL))
             {
                 flag = 1;
                 tmp -= 2;
@@ -251,7 +145,7 @@ void player::dash() // 冲刺突进技能
             }
         }
         // 上面的循环里最后一次循环结束后会多出一次没有被检测的值，这个值就是突进的终点位置，所以加上这句，在循环结束后再检测一次，不加的话会出现突进穿墙bug
-        if (flag == 0 && m->blocktype[pos.y + y * ydirection][pos.x + x * xdirection].type == WALL)
+        if (flag == 0 && iscoincide(pos.y + y * ydirection, pos.x + x * xdirection, WALL))
         {
             tmp -= 2;
         }
@@ -270,5 +164,13 @@ void player::dash() // 冲刺突进技能
         v.y *= tmp;
 
         isdash = false;
+    }
+}
+
+void player::dashcool()
+{
+    if (dash_cooling_time > 0)
+    {
+        dash_cooling_time--;
     }
 }

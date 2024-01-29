@@ -24,24 +24,24 @@ struct player
     char preblock = BG;
     pos_ pos = {2, MAP_HEIGHT - 2};
     pos_ v = {0, 0};                    // 速度
-    bool isair = false;                 // 角色是否浮空
-    bool istop = false;                 // 角色是否跳到最高点
-    bool isjump = false;                // 角色是否正在跳跃
-    bool iswalk = false;                // 角色是否正在移动
+    bool isAirborne = false;            // 角色是否浮空
+    bool isTopReached = false;          // 角色是否跳到最高点
+    bool isJumping = false;             // 角色是否正在跳跃
+    bool isWalking = false;             // 角色是否正在移动
     bool isdash = false;                // 角色是否冲刺
     int xdirection = RIGHT;             // 角色横方向
     int ydirection = DOWN;              // 角色纵方向
     int hop_count;                      // 跳跃高度
     int updatetime = PLAYER_UPDATETIME; // update时间,以后可以通过改变updatetime来实现加速度的模拟
 
-    int dash_cooling_time = 0; // 突进技能冷却时间，单位为PLAYER_UPDATETIME
+    int dash_cooling_time = DASH_COOLING_TIME; // 突进技能冷却时间，单位为PLAYER_UPDATETIME
 
-    void input();         // 检测输入
-    int update();         // 更新状态
-    void render();        // 渲染
-    void camera_render(); // 渲染摄像机，暂时放在player里
-    void timer();         // 计时器，应该放在game类里，暂时放在这里
+    int update();                               // 更新状态
+    void render();                              // 渲染
+    bool iscoincide(int y, int x, int object2); // 检查重合
+    void move();                                // 移动
     void dash();
+    void dashcool(); // 冲刺冷却
 };
 
 #endif

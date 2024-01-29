@@ -107,6 +107,9 @@ void UnsetColor(int foregroundcolor, int backgroundcolor)
 }
 
 int _time = 0;
+int iswin = -1;
+int gamestatus = 1; // 0是结束，1是正常状态
+std::mutex mtx;     // 使用互斥锁，避免因为两者同时渲染而出现的光标混乱问题
 
 #ifdef __linux__
 int key_state[MAX_KEYCODE + 1] = {0};

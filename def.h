@@ -12,7 +12,7 @@
 #ifdef _WIN32
 
 #include <Windows.h>
-#define MOVECURSOR(x,y) gotoxy(x,y)
+#define MOVECURSOR(x, y) gotoxy(x, y)
 #define PRINT printf
 #define CLEARWINDOW system("cls")
 
@@ -24,7 +24,7 @@
 #include <sys/select.h>
 #include <linux/input.h>
 
-#define MOVECURSOR(x,y) move(y,x)
+#define MOVECURSOR(x, y) move(y, x)
 #define PRINT printw
 #define CLEARWINDOW clear()
 
@@ -45,7 +45,7 @@ extern int key_state[MAX_KEYCODE + 1]; // 全局数组，记录键盘按键状�
 #define ENEMY 'E'
 #define BG '.'
 
-// 地图和摄像机的长宽
+// 地图和摄像机的长和高
 #define MAP_LENGTH 64
 #define MAP_HEIGHT 32
 #define CAMERA_LENGTH 32
@@ -61,7 +61,7 @@ extern int key_state[MAX_KEYCODE + 1]; // 全局数组，记录键盘按键状�
 #define MAXENEMY 4               // 敌人数量
 #define PLAYER_UPDATETIME 100000 // player更新间隔时间
 #define DASH_DISTANCE 5          // 突进距离
-#define DASH_COOLING_TIME 5      // 突进冷却时间
+#define DASH_COOLING_TIME 2      // 突进冷却时间
 
 enum
 {
@@ -69,6 +69,14 @@ enum
     RIGHT = 1,
     UP = -1,
     DOWN = 1
+};
+
+enum
+{
+    LEFTKEY = 1,
+    RIGHTKEY,
+    UPKEY,
+    DASHKEY
 };
 
 // enum // pairnum
@@ -106,11 +114,17 @@ extern void gotoxy(int x, int y);
 extern void HideConsoleCursor();
 extern void ShowConsoleCursor();
 #endif
+
 extern int Color(int r, int g, int b);          // 打包颜色
 extern void InitColor(int color, int colornum); // 初始化颜色
 extern void InitAllcolor();                     // 初始化所有颜色
 extern void SetColor(int foregroundcolor, int backgroundcolor);
 extern void UnsetColor(int foregroundcolor, int backgroundcolor);
+
+//全局变量👇
 extern int _time; // 游戏时间
+extern int iswin;
+extern int gamestatus; // 0是结束，1是正常状态
+extern std::mutex mtx;     // 使用互斥锁，避免因为两者同时渲染而出现的光标混乱问题
 
 #endif

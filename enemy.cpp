@@ -8,7 +8,7 @@ enemy::enemy(int x, int y)
 
 void enemy::update()
 {
-    if (m->blocktype[pos.y][pos.x + direction].type == WALL || m->blocktype[pos.y + 1][pos.x + direction].type != WALL)
+    if(m->blocktype[pos.y][pos.x + direction].type == WALL || m->blocktype[pos.y + 1][pos.x + direction].type != WALL)
     {
         direction *= -1;
     }

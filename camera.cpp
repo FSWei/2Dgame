@@ -43,7 +43,6 @@ void camera::renderObject(int x, int y, char object)
     if (isInsideCamera(x, y))
     {
         MOVECURSOR((LEFT_BORDER + (x - left)) * 2, TOP_BORDER + (y - top));
-        
         PRINT("%c ", object);
     }
 }
@@ -91,4 +90,34 @@ void camera::showBorder()
         }
     }
     UnsetColor(BORDER_COLOR, BORDER_COLOR);
+}
+
+void camera::camera_render()
+{
+    for (int y = top; y < top + height; y++)
+    {
+        for (int x = left; x < left + width; x++)
+        {
+            if (isInsideCamera(x, y)) // 检查坐标是否在C范围内
+            {
+                if (m->blocktype[y][x].type == PLAYER)
+                {
+                    // SetColor(foregroundcolor , backgroundcolor);
+                    // PRINT("%c ", m->blocktype[y][x].type);
+                    // UnsetColor();
+                }
+                else if (m->blocktype[y][x].type == ENEMY)
+                {
+                    // SetColor(e[0]->foregroundcolor | e[0]->backgroundcolor);
+                    // UnsetColor();
+                }
+                else
+                {
+                    SetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
+                    renderObject(x, y, m->blocktype[y][x].type);
+                    UnsetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
+                }
+            }
+        }
+    }
 }
