@@ -52,7 +52,9 @@ bool inputhandler::isKeyPressed(int keyCode)
     else if (keyCode == RIGHTKEY)
         return (GetAsyncKeyState(0x44) & 0x8000 || GetAsyncKeyState(0x27) & 0x8000);
     else if (keyCode == DASHKEY)
-        return (GetAsyncKeyState(0x4A) & 0x8000);
+        // return (GetAsyncKeyState(0x4A) & 0x8000);
+        return (GetAsyncKeyState(0x4C) & 0x8000);
+
 #elif __linux__
     // Linux 平台下的键盘状态检查代码
     if (keyCode == UPKEY)
@@ -62,7 +64,11 @@ bool inputhandler::isKeyPressed(int keyCode)
     else if (keyCode == RIGHTKEY)
         return (key_state[32] || key_state[106]);
     else if (keyCode == DASHKEY)
-        return (key_state[36]);
+        // J
+        //  return (key_state[36]);
+        // L
+        return (key_state[38])
+
 #endif
     return false;
 }

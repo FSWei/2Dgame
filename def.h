@@ -59,7 +59,6 @@ extern int key_state[MAX_KEYCODE + 1]; // 全局数组，记录键盘按键状�
 
 #define MAXHOP 4                 // 最大跳跃高度
 #define MAXENEMY 4               // 敌人数量
-#define PLAYER_UPDATETIME 100000 // player更新间隔时间
 #define DASH_DISTANCE 5          // 突进距离
 #define DASH_COOLING_TIME 2      // 突进冷却时间
 

@@ -8,7 +8,7 @@
 #include "camera.h"
 #include "input_handler.h"
 
-class Game
+struct Game
 {
 public:
     Game();

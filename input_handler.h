@@ -5,7 +5,7 @@
 
 #include "player.h"
 
-class inputhandler
+struct inputhandler
 {
 public:
     void handleInput(player &p);

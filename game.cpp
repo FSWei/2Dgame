@@ -9,7 +9,7 @@ void Game::run()
 	init();
 
 #ifdef __linux__
-	std::thread keyboardThread(keyboardCheck);
+	std::thread keyboardThread(keyboardCheck, this);
 #endif
 	std::thread inputThread(Input, this, &ih, &p);
 	std::thread playerThread(updatePlayer, this, &p);
@@ -262,7 +262,7 @@ void *Game::timer(player *p) // 计时器
 	while (gamestatus)
 	{
 		_time++;
-		p->dashcool();
+		p->skillcool();
 		usleep(1000000); // 一秒
 	}
 	return NULL;

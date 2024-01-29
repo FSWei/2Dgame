@@ -167,7 +167,7 @@ void player::dash() // 冲刺突进技能
     }
 }
 
-void player::dashcool()
+void player::skillcool()
 {
     if (dash_cooling_time > 0)
     {
