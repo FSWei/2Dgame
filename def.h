@@ -8,6 +8,7 @@
 #include <thread>
 #include <unistd.h>
 #include <mutex>
+#include <functional>
 
 #ifdef _WIN32
 
@@ -57,10 +58,10 @@ extern int key_state[MAX_KEYCODE + 1]; // 全局数组，记录键盘按键状�
 #define BOTTOM_BORDER 2           // 底端边界
 #define BORDER_COLOR _255_255_255 // 边框颜色
 
-#define MAXHOP 4                 // 最大跳跃高度
-#define MAXENEMY 4               // 敌人数量
-#define DASH_DISTANCE 5          // 突进距离
-#define DASH_COOLING_TIME 2      // 突进冷却时间
+#define MAXHOP 6            // 最大跳跃高度
+#define MAXENEMY 4          // 敌人数量
+#define DASH_DISTANCE 5     // 突进距离
+#define DASH_COOLING_TIME 2 // 突进冷却时间
 
 enum
 {
@@ -120,10 +121,10 @@ extern void InitAllcolor();                     // 初始化所有颜色
 extern void SetColor(int foregroundcolor, int backgroundcolor);
 extern void UnsetColor(int foregroundcolor, int backgroundcolor);
 
-//全局变量👇
+// 全局变量👇
 extern int _time; // 游戏时间
 extern int iswin;
 extern int gamestatus; // 0是结束，1是正常状态
-extern std::mutex mtx;     // 使用互斥锁，避免因为两者同时渲染而出现的光标混乱问题
+extern std::mutex mtx; // 使用互斥锁，避免因为两者同时渲染而出现的光标混乱问题
 
 #endif

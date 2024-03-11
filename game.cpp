@@ -1,6 +1,6 @@
 #include "game.h"
 
-Game::Game()
+Game::Game() : camera(nullptr), map(nullptr), background(nullptr), player(nullptr), inputhandler(nullptr), enemy(nullptr)
 {
 }
 
@@ -9,13 +9,13 @@ void Game::run()
 	init();
 
 #ifdef __linux__
-	std::thread keyboardThread(keyboardCheck, this);
+    std::thread keyboardThread([this]() { keyboardCheck(); });
 #endif
-	std::thread inputThread(Input, this, &ih, &p);
-	std::thread playerThread(updatePlayer, this, &p);
-	std::thread enemyThread(updateEnemy, this, &e);
-	std::thread renderThread(render, this, &p, &e, &c);
-	std::thread timerThread(timer, this, &p);
+    std::thread inputThread([this]() { Input(inputhandler, player); });
+    std::thread playerThread([this]() { updatePlayer(player); });
+    std::thread enemyThread([this]() { updateEnemy(&enemy); });
+    std::thread renderThread([this]() { render(player, &enemy, camera); });
+    std::thread timerThread([this]() { timer(player); });
 
 #ifdef __linux__
 	keyboardThread.join();
@@ -31,27 +31,35 @@ void Game::run()
 
 void Game::init()
 {
-	p.m = &m;
-	p.bg = &bg;
-	p.c = &c;
+	camera = new Camera();
+	map = new Map();
+	background = new Background();
+	player = new Player();
+	inputhandler = new Inputhandler();
+	enemy = new Enemy[MAXENEMY]{{11, 24}, {17, 24}, {16, 20}, {21, 15}};
 
-	m.p = &p;
-	m.bg = &bg;
+	(*player).map = map;
+	(*player).background = background;
+	(*player).camera = camera;
 
-	c.m = &m;
+	(*map).player = player;
+	(*map).background = background;
+
+	(*camera).map = map;
 
 	for (int i = 0; i < MAXENEMY; i++)
 	{
-		m.e[i] = &e[i];
-		p.e[i] = &e[i];
-		e[i].m = &m;
-		e[i].bg = &bg;
-		e[i].c = &c;
+		enemy[i].map = map;
+		enemy[i].background = background;
+		enemy[i].camera = camera;
 	}
 
-	c.init(p.pos.x - CAMERA_LENGTH / 2, p.pos.y - CAMERA_HEIGHT / 2 + 2, CAMERA_LENGTH, CAMERA_HEIGHT);
-	m.init();
-	c.showBorder();
+	(*camera).init((*player).roleblock[0].pos.x - CAMERA_LENGTH / 2, (*player).roleblock[0].pos.y - CAMERA_HEIGHT / 2 + 2, CAMERA_LENGTH, CAMERA_HEIGHT);
+	// (*camera).init((*player).pos.x - CAMERA_LENGTH / 2, (*player).pos.y - CAMERA_HEIGHT / 2 + 2, CAMERA_LENGTH, CAMERA_HEIGHT);
+	(*map).init();
+	(*camera).showBorder();
+	(*camera).camera_render();
+	(*player).render();
 }
 
 #ifdef __linux__
@@ -141,30 +149,29 @@ void *Game::keyboardCheck()
 }
 #endif
 
-void *Game::Input(inputhandler *ih, player *p)
+void *Game::Input(Inputhandler *ih, Player *player)
 {
 	while (gamestatus)
 	{
-		ih->handleInput(*p);
+		ih->handleInput(*player);
 		usleep(100000);
 	}
 	return NULL;
 }
 
-void *Game::updatePlayer(player *p)
+void *Game::updatePlayer(Player *player)
 {
 	while (gamestatus)
 	{
-		// p->input();
-		iswin = p->update();
-		p->c->update(p->pos.x, p->pos.y); // 既然摄像头是跟着player移动的，那就让它和player一起更新
+		player->update();
+		player->camera->update(player->roleblock[0].pos.x, player->roleblock[0].pos.y); // 既然摄像头是跟着player移动的，那就让它和player一起更新
 
-		usleep(p->updatetime);
+		usleep(player->updatetime);
 	}
 	return NULL;
 }
 
-void *Game::updateEnemy(enemy (*e)[MAXENEMY])
+void *Game::updateEnemy(Enemy (**e))
 {
 	while (gamestatus)
 	{
@@ -172,25 +179,25 @@ void *Game::updateEnemy(enemy (*e)[MAXENEMY])
 		{
 			(*e)[i].update();
 		}
-		usleep(200000);
+		usleep((*e)[0].updatetime);
 	}
 	return NULL;
 }
 
-void *Game::render(player *p, enemy (*e)[MAXENEMY], camera *c)
+void *Game::render(Player *player, Enemy (**e), Camera *camera)
 {
 	while (gamestatus)
 	{
 		mtx.lock();
-		print_data(p, e); // 打印数据
+		print_data(player, e); // 打印数据
 		mtx.unlock();
 
 		mtx.lock();
-		c->camera_render();
+		camera->camera_render();
 		mtx.unlock();
 
 		mtx.lock();
-		p->render();
+		player->render();
 		mtx.unlock();
 
 		for (int i = 0; i < MAXENEMY; i++)
@@ -216,38 +223,51 @@ void *Game::render(player *p, enemy (*e)[MAXENEMY], camera *c)
 		refresh();
 #endif
 
-		usleep(p->c->updatetime);
+		usleep(player->camera->updatetime);
 	}
 
 	return NULL;
 }
 
-void Game::print_data(player *p, enemy (*e)[MAXENEMY])
+void Game::print_data(Player *player, Enemy (**e))
 {
 	SetColor(_255_255_255, _0_0_0);
 
 	int tmp = 0;
 
+	// MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// PRINT("preblock:%c   ", player->preblock);
 	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	PRINT("preblock:%c   ", p->preblock);
+	PRINT("[0]pos:%d/%d , [1]pos:%d/%d   ", player->roleblock[0].pos.x, player->roleblock[0].pos.y, player->roleblock[1].pos.x, player->roleblock[1].pos.y);
+	// MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// PRINT("next:%d,%d:%c    ", player->pos.x + player->v.x * player->xdirection, player->pos.y + player->isAirborne * player->ydirection, player->map->blocktype[player->pos.y + player->isAirborne * player->ydirection][player->pos.x + player->v.x * player->xdirection].type);
 	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	PRINT("pos:%d,%d   ", p->pos.x, p->pos.y);
+	PRINT("v:%d,%d   ", player->v.x, player->v.y);
 	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	PRINT("next:%d,%d:%c    ", p->pos.x + p->v.x * p->xdirection, p->pos.y + p->isAirborne * p->ydirection, p->m->blocktype[p->pos.y + p->isAirborne * p->ydirection][p->pos.x + p->v.x * p->xdirection].type);
+	PRINT("direction:%d,%d   ", player->xdirection, player->ydirection);
 	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	PRINT("v:%d,%d   ", p->v.x, p->v.y);
+	PRINT("jump_ticks:%d   ", player->jump_ticks);
 	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	PRINT("direction:%d,%d   ", p->xdirection, p->ydirection);
-	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	PRINT("hop_count:%d   ", p->hop_count);
-	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	PRINT("isTopReached:%d,isAirborne :%d,isJumping:%d,isWalking:%d,isdash:%d     ", p->isTopReached, p->isAirborne, p->isJumping, p->isWalking, p->isdash);
+	PRINT("canJump:%d,canFall:%d,isAirborne:%d,isJumping:%d,isWalking:%d,isdash:%d     ", player->canJump, player->canFall, player->isAirborne, player->isJumping, player->isWalking, player->isdash);
+	// PRINT("canJump1:%d,canJump2:%d,isAirborne :%d,isJumping:%d,isWalking:%d,isdash:%d     ", player->canJump1, player->canJump2, player->isAirborne, player->isJumping, player->isWalking, player->isdash);
 	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
 	PRINT("time:%d   ", _time);
 	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	PRINT("c.left:%d,c.top:%d    ", p->c->left, p->c->top);
+	PRINT("c.left:%d,c.top:%d    ", player->camera->left, player->camera->top);
 	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
-	PRINT("dash_cooling_time:%d   ", p->dash_cooling_time);
+	PRINT("dash_cooling_time:%d   ", player->dash_cooling_time);
+	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	// 打印player下一个位置的方块类型
+	PRINT("[0]next:%d,%d:%c    ", player->roleblock[0].pos.x + player->v.x * player->xdirection, player->roleblock[0].pos.y + player->isAirborne * player->ydirection, player->map->blocktype[player->roleblock[0].pos.y + player->isAirborne * player->ydirection][player->roleblock[0].pos.x + player->v.x * player->xdirection].type);
+	PRINT("[1]next:%d,%d:%c    ", player->roleblock[1].pos.x + player->v.x * player->xdirection, player->roleblock[1].pos.y + player->isAirborne * player->ydirection, player->map->blocktype[player->roleblock[1].pos.y + player->isAirborne * player->ydirection][player->roleblock[1].pos.x + player->v.x * player->xdirection].type);
+	PRINT("[2]next:%d,%d:%c    ", player->roleblock[1].pos.x + player->v.x * player->xdirection, player->roleblock[1].pos.y + player->isAirborne * player->ydirection, player->map->blocktype[player->roleblock[1].pos.y + player->isAirborne * player->ydirection][player->roleblock[1].pos.x + player->v.x * player->xdirection].type);
+	PRINT("[3]next:%d,%d:%c    ", player->roleblock[1].pos.x + player->v.x * player->xdirection, player->roleblock[1].pos.y + player->isAirborne * player->ydirection, player->map->blocktype[player->roleblock[1].pos.y + player->isAirborne * player->ydirection][player->roleblock[1].pos.x + player->v.x * player->xdirection].type);
+	MOVECURSOR(LEFT_BORDER * 2, TOP_BORDER + CAMERA_HEIGHT + BOTTOM_BORDER + tmp++);
+	//打印preblock
+	PRINT("[0]preblock:%c   ", player->roleblock[0].preblock);
+	PRINT("[1]preblock:%c   ", player->roleblock[1].preblock);
+	PRINT("[2]preblock:%c   ", player->roleblock[2].preblock);
+	PRINT("[3]preblock:%c   ", player->roleblock[3].preblock);
 
 	for (int i = 0; i < MAXENEMY; i++)
 	{
@@ -257,12 +277,12 @@ void Game::print_data(player *p, enemy (*e)[MAXENEMY])
 	UnsetColor(_255_255_255, _0_0_0);
 }
 
-void *Game::timer(player *p) // 计时器
+void *Game::timer(Player *player) // 计时器
 {
 	while (gamestatus)
 	{
 		_time++;
-		p->skillcool();
+		player->skillcool();
 		usleep(1000000); // 一秒
 	}
 	return NULL;
@@ -270,7 +290,12 @@ void *Game::timer(player *p) // 计时器
 
 void Game::end()
 {
-	// Clean up any resources
+	delete camera;
+	delete map;
+	delete background;
+	delete player;
+	delete inputhandler;
+	delete[] enemy;
 }
 
 void Game::win()

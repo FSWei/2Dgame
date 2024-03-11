@@ -5,10 +5,10 @@
 
 #include "player.h"
 
-struct inputhandler
+struct Inputhandler
 {
 public:
-    void handleInput(player &p);
+    void handleInput(Player &player);
     bool isKeyPressed(int keyCode);
 };
 

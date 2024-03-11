@@ -5,18 +5,18 @@ int pack(int a, int b, int c) {
     return (a << 20) | (b << 10) | c;
 }
 
-void unpack(int packed, int *a, int *b, int *c) {
+void unpack(int packed, int *a, int *b, int *camera) {
     // 使用位运算将一个整数解包成三个整数
     *a = (packed >> 20) & 1023; // 获取前 10 位
     *b = (packed >> 10) & 1023; // 获取中间 10 位
-    *c = packed & 1023; // 获取后 10 位
+    *camera = packed & 1023; // 获取后 10 位
 }
 
 int main() {
     int x = 123, y = 456, z = 789;
     int packed = pack(x, y, z);
     int a, b, c;
-    unpack(packed, &a, &b, &c);
+    unpack(packed, &a, &b, &camera);
     
     printw("Original values: x = %d, y = %d, z = %d\n", x, y, z);
     printw("Packed value: %d\n", packed);

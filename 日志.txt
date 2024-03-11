@@ -71,16 +71,16 @@
 目前所使用的SetConsoleTextAttribute来设置颜色，似乎只能支持有限的颜色，这样后期想用控制台去绘制一些背景的时候效果会不好
 解决方法有两个
 一是使用关于ansi转义序列的CONSOLE_SCREEN_BUFFER_INFOEX、colortable、rgb等win api来以rgb格式设置字体和背景颜色，但是刚刚尝试了一下，似乎不行
-详见https://learn.microsoft.com/zh-cn/windows/console/console-virtual-terminal-sequences中的“扩展颜色”
+详见https://learn.microsoft.cameraom/zh-cn/windows/console/console-virtual-terminal-sequences中的“扩展颜色”
 似乎windows默认自带的控制台不支持那么多颜色，而是某些虚拟终端仿真器支持比 Windows 控制台提供的 16 种颜色更多的颜色调色板。
 二是用脚本把图片转换为字符画的时候，把不同颜色的像素聚类，这样会使呈现出来的效果差一点，但是也别无他法了
 关于ansi转义序列和虚拟终端的参考资料
-https://blog.walterlv.com/post/enable-virtual-terminal-processing.html
-https://learn.microsoft.com/zh-cn/windows/console/setconsolemode?wt.mc_id=MVP
-https://learn.microsoft.com/zh-cn/windows/console/getconsolemode
+https://blog.walterlv.cameraom/post/enable-virtual-terminal-processing.html
+https://learn.microsoft.cameraom/zh-cn/windows/console/setconsolemode?wt.mc_id=MVP
+https://learn.microsoft.cameraom/zh-cn/windows/console/getconsolemode
 https://en.wikipedia.org/wiki/ANSI_escape_code
-https://learn.microsoft.com/zh-cn/windows/console/console-virtual-terminal-sequences
-https://learn.microsoft.com/zh-cn/windows/console/console-screen-buffer-infoex#members
+https://learn.microsoft.cameraom/zh-cn/windows/console/console-virtual-terminal-sequences
+https://learn.microsoft.cameraom/zh-cn/windows/console/console-screen-buffer-infoex#members
 
 16:03
 关于字体颜色的问题，经过几个小时的探索，找到了两个方法：
@@ -88,17 +88,17 @@ https://learn.microsoft.com/zh-cn/windows/console/console-screen-buffer-infoex#m
 但是探索很长时间后，发现怎么修改都是没有效果。遂放弃
 其二：直接用ansi转义符，设置背景和前景颜色，这个方法成功了，通过printw("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm", i, j, k, k, j, i);设置前景和背景颜色
 打印字符之后，再用printw("\x1B[0m");恢复默认状态即可
-详细的测试代码见文件夹test里的color_test.cpp
+详细的测试代码见文件夹test里的color_test.camerapp
 *(改是改好了，但是卡顿和闪烁问题变得很严重，双缓冲问题亟待解决)*
 
-√3、颜色修改过程中，用到了"整数打包"和"整数解包"的技术，测试代码见test\data_pack.cpp
+√3、颜色修改过程中，用到了"整数打包"和"整数解包"的技术，测试代码见test\data_pack.camerapp
 4、修改vscode工作区里2dgame子目录test下的cpp文件单独使用一个.vscode配置
 5、在cmd控制台中光标偶尔会莫名其妙自己显现出来，但是似乎不是代码的问题而是系统的问题
 
 
 2023/10/22 12:41
 1、今天开始着手双缓冲的优化
-测试代码见exe\double_buffer_test.cpp，里面实现了基本的双缓冲逻辑
+测试代码见exe\double_buffer_test.camerapp，里面实现了基本的双缓冲逻辑
 但是其实测试代码中的方法不能用于我的2dgame，因为其中对于颜色的修改还是通过修改Attributes属性来实现，这样输出的颜色有很大的局限性
 而我要通过ansi转义符来实现颜色的更改
 目前所想的解决办法是在consoleBuffer中预留出空间，专门用于存储颜色转换的ANSI转义符和恢复默认的ANSI转义符
@@ -113,16 +113,16 @@ https://learn.microsoft.com/zh-cn/windows/console/console-screen-buffer-infoex#m
 **2、或者用NCurses重写代码**
 
 16:33
-尝试了很长时间的方法（见exe\double_buffer_test2.cpp），代码的难度太大，计算比较复杂
+尝试了很长时间的方法（见exe\double_buffer_test2.camerapp），代码的难度太大，计算比较复杂
 
 2023/10/23 10:38
 今天开始进行蓝桥杯准备，此项目暂时搁置
 
 2023/10/24 18:59
-白天又调试了一下Double_Buffer_test2.cpp，仍然存在一些小问题
+白天又调试了一下Double_Buffer_test2.camerapp，仍然存在一些小问题
 
 2023/11/6 19:57
-今天再次调试了Double_Buffer_test3.cpp，bug仍然存在，估计就是因为缓冲区中的字符数远远超出了控制台长度（即使转义字符根本不会在控制台中实际显示出来）
+今天再次调试了Double_Buffer_test3.camerapp，bug仍然存在，估计就是因为缓冲区中的字符数远远超出了控制台长度（即使转义字符根本不会在控制台中实际显示出来）
 其实我也不确定错误原因究竟是什么，而且我感觉很可能不是这个原因👆
 不管了，放弃这个方法
 下面简单阐述一下思路
@@ -196,7 +196,7 @@ Separate control modules under Linux and Windows
 
 目前发现的一个新的问题是，在游戏结束后，提示用户继续游戏还是退出游戏的时候，即使用户选择了退出游戏（N/n），仍然会继续游戏，我推测是在游戏结束后，开启阻塞模式，虽然程序会等待用户输入，但是其实输入缓冲区中仍然有键值残余，即使用户输入了，录入的choice值也不是用户输入的，而是以前的键值残余，不过这个bug倒是不难修改
 
-g++ -fdiagnostics-color=always -g /media/fsw/data/github/2Dgame/*.cpp -o /media/fsw/data/github/2Dgame/exe/game -lncurses
+g++ -fdiagnostics-color=always -g /media/fsw/data/github/2Dgame/*.camerapp -o /media/fsw/data/github/2Dgame/exe/game -lncurses
 
 2024/1/28 14:07
 今天完成了程序在linux和windows双系统的适配
@@ -214,5 +214,71 @@ g++ -fdiagnostics-color=always -g /media/fsw/data/github/2Dgame/*.cpp -o /media/
 √5、从main函数中抽象出game类，input、update和render添加为成员函数
 
 2024/1/29 21:29
-把角色的每一个方块都抽象成一个类：block，然后在具体的角色类中去确定这个角色的block数量和初始位置，这样就可以搭建任意形状的角色
-在碰撞（重合）检测中，用循环把角色的每一个block都检测一遍就好了
+把角色的每一个方块都抽象成一个类：Roleblock，然后在具体的角色类中去确定这个角色的Roleblock数量和初始位置，这样就可以搭建任意形状的角色
+在碰撞（重合）检测中，用循环把角色的每一个roleblock都检测一遍就好了
+
+2024/1/30 1:01
+目前初步修改了代码，但是带来了很多的问题
+经过调试，发现问题的主要原因是用循环按顺序去判断/更新/渲染roleblock时，由于不能同步进行，会导致后来遍历的roleblock在判断完毕，改变isAirborne等属性后，直接进行更新。
+修改了一下，把update中的判断和位置更新分成了两个循环，这样就会在全都判断完成之后再按照最后的属性进行更新
+但这样就导致update函数和加入roleblock之前无异，最终还是按照其中的某一个block去更新
+***注意：而且除此之外仍会有渲染bug***
+
+解决办法应该似乎只有给每个roleblock都添加属性值，然后每次判断都只改变特定的roleblock的属性值，再整体更新
+或者直接完全重写update逻辑，适应这种架构
+比如找到角色的最上最下最左最右四个roleblock，然后通过判断他们去获得属性值的最终结果
+
+2024/1/30 11:15 
+👆但是这样就失去了“判断角色的每一个roleblock”的效果，如果是一个不规则形状，那么就会出现问题
+有办法了：不去判断角色中的所有roleblock，也不去单纯地判断最上最下最左最右四个值，而是判断所有作为边框的roleblock
+区分边框的roleblock的方法有很多，比如手动添加一个标记，或者用pos去判断
+不仅要区分边框，还要区分它代表哪个边（上下左右）
+可以在最外层先去判断它的（上、下、左、右）位置是否为自己，如果是，则跳过，如果不是，则去判断并修改相应的（上、下、左、右）碰撞状态
+主要修改的地方是把每一个roleblock的判断都添加到角色状态中，而非单纯地使用最后一个roleblock的判断
+
+注意整体与个体的界限，哪些属性值应该放在整体里，哪些属性值应该放在个体里
+
+2024/1/31 13:20
+今天开始着手Player::update的重写
+目前思路：
+首先把Player::isTopReached改为了Player::canJump，并且把原先的true和false反过来，这样清晰一点
+然后，先把move()中的x轴和y轴的判定分开，再分别在x轴和y轴判定中确定具体方向（上、下、左、右），并给每个方向添加一个此方向上的下一个是否是自己的判断
+如果是自己，则直接跳过判断，如果不是，则进行判断，并修改属性值
+
+2024/2/1 0:38
+目前存在非常非常多的问题
+首先，update中的move部分的逻辑虽然看似正常运行，但是逻辑极其混乱，对跳跃和下落的判断仍然存在问题，而且有时候会出现“吃墙”的情况
+并且其中的dash还没有做任何适应性修改
+其次，位置更新部分也存在问题：循环中后渲染的部分的preblock会覆盖掉先渲染部分的 P 为 .
+目前对于这个问题，有三种思路：
+1、对于先渲染的部分，当把它渲染到下一个位置的时候，发现下一个位置也是自己时，做出标记。（但是这个标记必须只对运动趋势上的下一个位置生效）
+2、思考算法：根据运动方向，把所有roleblock按照从 运动方向的反方向 到 运动方向 的顺序排序，然后依次进行渲染，这样就可以防止出现覆盖问题（不过修改起来十分麻烦）
+3、对于先渲染的部分，当把它渲染到下一个位置的时候，发现下一个位置也是自己时，想办法把下一个位置的preblock改为P即可，但是这样的话需要修改除了自己以外的其他roleblock，就得放弃lambda表达式的使用
+
+肯定还有很多其他问题，比如当角色一个方向上的roleblock在三个或三个以上时，或者角色的形状不单纯是一个矩形时，还没有进行测试
+
+归根结底，这些问题全都是“roleblock不能同时进行判断，只能进行顺序判断”所引起的检测和渲染冲突
+
+2024/2/2 14:59
+https://blog.n0p3.cn/2020/04/05/InfantGameEngine/
+👆找遍全网终于找到一个和我遇到差不多问题的人（渲染部分）
+
+搞两个大小为player_blocksize的canJump和canFall的数组，记录每一个roleblock的状态
+👆略作修改，把canJump和canFall全部放到Roleblock类里
+
+2024/2/2 18:45
+初步修改后，代码似乎正常运行，只是还存在如下问题：
+1、当角色跳跃完，在落地之前，此时canJump == 0；若此时按住←或→，则canJump不会被置为1，除非松开←和→
+2、有时左右移动会出现roleblock混乱的情况
+
+2024/2/7 18:45
+最近过年比较忙，暂时搁置
+
+2024/2/11 15:06
+bug：卡墙角、吃墙、两侧roleblock下坠判断过于提前导致左右手下方有flag的时候直接结束
+
+2024/3/11 13:27
+最近琐事繁多，生活也步入正轨，以后有时间再搞吧。
+下面记录几个暂时注释的地方和问题：
+1、player.cpp:39暂时注释
+2、冲刺后的颜色更新问题

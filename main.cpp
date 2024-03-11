@@ -38,6 +38,7 @@ int main()
 		game.run();
 
 		gamestatus = 1;
+		iswin = -1;
 
 #ifdef _WIN32
 		ShowConsoleCursor();									 // 显示光标

@@ -1,6 +1,6 @@
 #include "camera.h"
 
-void camera::init(int left, int top, int width, int height)
+void Camera::init(int left, int top, int width, int height)
 {
     this->left = left;
     this->top = top;
@@ -17,7 +17,7 @@ void camera::init(int left, int top, int width, int height)
         this->top = MAP_HEIGHT - height;
 }
 
-void camera::update(int playerX, int playerY)
+void Camera::update(int playerX, int playerY)
 {
     // 根据角色的位置更新镜头的位置
     left = playerX - width / 2;
@@ -33,12 +33,12 @@ void camera::update(int playerX, int playerY)
         top = MAP_HEIGHT - height;
 }
 
-bool camera::isInsideCamera(int x, int y)
+bool Camera::isInsideCamera(int x, int y)
 {
     return x >= left && x < left + width && y >= top && y < top + height;
 }
 
-void camera::renderObject(int x, int y, char object)
+void Camera::renderObject(int x, int y, char object)
 {
     if (isInsideCamera(x, y))
     {
@@ -47,7 +47,7 @@ void camera::renderObject(int x, int y, char object)
     }
 }
 
-void camera::showBorder()
+void Camera::showBorder()
 {
     SetColor(BORDER_COLOR, BORDER_COLOR);
     // 上面
@@ -92,7 +92,7 @@ void camera::showBorder()
     UnsetColor(BORDER_COLOR, BORDER_COLOR);
 }
 
-void camera::camera_render()
+void Camera::camera_render()
 {
     for (int y = top; y < top + height; y++)
     {
@@ -100,22 +100,22 @@ void camera::camera_render()
         {
             if (isInsideCamera(x, y)) // 检查坐标是否在C范围内
             {
-                if (m->blocktype[y][x].type == PLAYER)
+                if (map->blocktype[y][x].type == PLAYER)
                 {
                     // SetColor(foregroundcolor , backgroundcolor);
-                    // PRINT("%c ", m->blocktype[y][x].type);
+                    // PRINT("%c ", map->blocktype[y][x].type);
                     // UnsetColor();
                 }
-                else if (m->blocktype[y][x].type == ENEMY)
+                else if (map->blocktype[y][x].type == ENEMY)
                 {
                     // SetColor(e[0]->foregroundcolor | e[0]->backgroundcolor);
                     // UnsetColor();
                 }
                 else
                 {
-                    SetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
-                    renderObject(x, y, m->blocktype[y][x].type);
-                    UnsetColor(m->blocktype[y][x].foregroundcolor, m->blocktype[y][x].backgroundcolor);
+                    SetColor(map->blocktype[y][x].foregroundcolor, map->blocktype[y][x].backgroundcolor);
+                    renderObject(x, y, map->blocktype[y][x].type);
+                    UnsetColor(map->blocktype[y][x].foregroundcolor, map->blocktype[y][x].backgroundcolor);
                 }
             }
         }

@@ -43,7 +43,7 @@
 // 	SetConsoleMode(hConsole, consoleMode);
 // 	// 获取控制台屏幕缓冲区的信息
 // 	CONSOLE_SCREEN_BUFFER_INFOEX csbi;
-// 	csbi.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
+// 	csbi.camerabSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
 // 	GetConsoleScreenBufferInfoEx(hConsole, &csbi);
 
 // 	printw("%d\n", csbi.ColorTable[0]);

@@ -5,4 +5,4 @@
 3、在test3中增加缓冲区大小和字符串长度测试一下
 
 2023/11/6 14:55
-今天又测试了一下，test3.cpp中的tmp2buffer可以正常显示，而lenbuffer却出现了显示错误
+今天又测试了一下，test3.camerapp中的tmp2buffer可以正常显示，而lenbuffer却出现了显示错误

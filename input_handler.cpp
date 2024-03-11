@@ -1,47 +1,47 @@
 #include "input_handler.h"
 
-void inputhandler::handleInput(player &p)
+void Inputhandler::handleInput(Player &player)
 {
     if (isKeyPressed(UPKEY))
     {
-        p.isJumping = true;
+        player.isJumping = true;
     }
 
     if (isKeyPressed(RIGHTKEY))
     {
-        p.isWalking = true;
-        p.xdirection = RIGHT;
+        player.isWalking = true;
+        player.xdirection = RIGHT;
     }
 
     else if (isKeyPressed(LEFTKEY))
     {
-        p.isWalking = true;
-        p.xdirection = LEFT;
+        player.isWalking = true;
+        player.xdirection = LEFT;
     }
 
     if (isKeyPressed(DASHKEY))
     {
-        p.isdash = true;
+        player.isdash = true;
     }
 
     // 如果左键右键a键d键都松开，isWalking = false
     if (!(isKeyPressed(LEFTKEY) || isKeyPressed(RIGHTKEY)))
     {
-        p.isWalking = false;
+        player.isWalking = false;
     }
     // 如果上键松开，isJumping = false
     if (!isKeyPressed(UPKEY))
     {
-        p.isJumping = false;
+        player.isJumping = false;
     }
     // 如果j键松开，isdash=false
     if (!isKeyPressed(DASHKEY))
     {
-        p.isdash = false;
+        player.isdash = false;
     }
 }
 
-bool inputhandler::isKeyPressed(int keyCode)
+bool Inputhandler::isKeyPressed(int keyCode)
 {
 #ifdef _WIN32
     // Windows 平台下的键盘状态检查代码

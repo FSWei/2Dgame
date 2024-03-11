@@ -73,9 +73,9 @@ void keyboard_listener() {
                 ret = read(fd_keyboard1, &ev, sizeof(ev));
                 if (ret == sizeof(ev) && ev.type == EV_KEY) {
                     if (ev.value == 1)
-                        key_state[ev.code] = 1;
+                        key_state[ev.cameraode] = 1;
                     else if (ev.value == 0)
-                        key_state[ev.code] = 0;
+                        key_state[ev.cameraode] = 0;
                 }
             }
 
@@ -83,9 +83,9 @@ void keyboard_listener() {
                 ret = read(fd_keyboard2, &ev, sizeof(ev));
                 if (ret == sizeof(ev) && ev.type == EV_KEY) {
                     if (ev.value == 1)
-                        key_state[ev.code] = 1;
+                        key_state[ev.cameraode] = 1;
                     else if (ev.value == 0)
-                        key_state[ev.code] = 0;
+                        key_state[ev.cameraode] = 0;
                 }
             }
         }

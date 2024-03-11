@@ -3,25 +3,22 @@
 
 #include "def.h"
 #include "player.h"
-#include "enemy.h"
 
-struct background;
-struct player;
-struct enemy;
+struct Background;
+struct Player;
 
-struct block
+struct Block
 {
     char type;
     int foregroundcolor = _255_255_255;
     int backgroundcolor = _0_0_0;
 };
 
-struct map
+struct Map
 {
-    background *bg;
-    player *p;
-    enemy *e[MAXENEMY]; // 指针数组
-    block blocktype[MAP_HEIGHT][MAP_LENGTH];
+    Background *background;
+    Player *player;
+    Block blocktype[MAP_HEIGHT][MAP_LENGTH];
 
     // map();
     void init();
@@ -29,10 +26,10 @@ struct map
     void camera_show(); // 因为写在camera里的话还要引用map.h，索性直接写在map里
 };
 
-struct background
+struct Background
 {
-    block blocktype[MAP_HEIGHT][MAP_LENGTH];
-    background();
+    Block blocktype[MAP_HEIGHT][MAP_LENGTH];
+    Background();
     void show();
 };
 

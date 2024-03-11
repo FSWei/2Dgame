@@ -1,34 +1,34 @@
 #include "enemy.h"
 
-enemy::enemy(int x, int y)
+Enemy::Enemy(int x, int y)
 {
     pos.x = x;
     pos.y = y;
 }
 
-void enemy::update()
+void Enemy::update()
 {
-    if(m->blocktype[pos.y][pos.x + direction].type == WALL || m->blocktype[pos.y + 1][pos.x + direction].type != WALL)
+    if (map->blocktype[pos.y][pos.x + direction].type == WALL || map->blocktype[pos.y + 1][pos.x + direction].type != WALL)
     {
         direction *= -1;
     }
 
-    m->blocktype[pos.y][pos.x].type = preblock;
+    map->blocktype[pos.y][pos.x].type = preblock;
     pos.x += direction;
 
-    if (m->blocktype[pos.y][pos.x].type != ENEMY && m->blocktype[pos.y][pos.x].type != PLAYER)
-        preblock = m->blocktype[pos.y][pos.x].type;
+    if (map->blocktype[pos.y][pos.x].type != ENEMY && map->blocktype[pos.y][pos.x].type != PLAYER) // 如果下一个位置不是enemy和player
+        preblock = map->blocktype[pos.y][pos.x].type;                                              // 记录下一个位置的方块类型
 
-    backgroundcolor = m->blocktype[pos.y][pos.x].backgroundcolor;
-    m->blocktype[pos.y][pos.x].type = name;
+    backgroundcolor = map->blocktype[pos.y][pos.x].backgroundcolor;
+    map->blocktype[pos.y][pos.x].type = name;
 }
 
-void enemy::render()
+void Enemy::render()
 {
-    if (c->isInsideCamera(pos.x, pos.y))
+    if (camera->isInsideCamera(pos.x, pos.y))
     {
         SetColor(foregroundcolor, backgroundcolor);
-        c->renderObject(pos.x, pos.y, m->blocktype[pos.y][pos.x].type);
+        camera->renderObject(pos.x, pos.y, map->blocktype[pos.y][pos.x].type);
         UnsetColor(foregroundcolor, backgroundcolor);
     }
 }

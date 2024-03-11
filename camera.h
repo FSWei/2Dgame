@@ -4,17 +4,17 @@
 #include "def.h"
 #include "map.h"
 
-struct map;
+struct Map;
 
-struct camera
+struct Camera
 {
-    map *m;
+    Map *map;
 
     int left;
     int top;
     int width;
     int height;
-    int updatetime = 200; // 这个值越小帧率越高，但是注意不要太小，否则效果适得其反
+    int updatetime = 150; // 这个值越小帧率越高，但是注意不要太小，否则效果适得其反
 
     void init(int left, int top, int width, int height); // 初始化
     void update(int playerX, int playerY);               // 根据player坐标更新camera位置
