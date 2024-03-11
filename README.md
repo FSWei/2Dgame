@@ -18,21 +18,21 @@
 # 如果您没有使用vscode，请直接在当前文件夹的控制台窗口输入以下指令编译：
 
 ## windows：
-'''bash
+```bash
 g++ -fdiagnostics-color=always -g *.cpp -o exe/game.exe
-'''
+```
 之后game.exe会出现在当前文件夹下的exe文件夹中，双击运行即可
 
 ## linux：
-'''bash
+```bash
 g++ -fdiagnostics-color=always -g *.cpp -o exe/game -lncurses
-'''
+```
 之后game会出现在当前文件夹下的exe文件夹中
 然后输入以下指令：
-'''bash
+```bash
 cd exe
 sudo ./game
-'''
+```
 运行即可
 
 
