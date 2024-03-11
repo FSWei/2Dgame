@@ -67,7 +67,7 @@ bool Inputhandler::isKeyPressed(int keyCode)
         // J
         //  return (key_state[36]);
         // L
-        return (key_state[38])
+        return (key_state[38]);
 
 #endif
     return false;
