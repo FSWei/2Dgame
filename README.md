@@ -43,3 +43,9 @@ sudo ./game
 # 游戏操作：
 
 WASD上下左右，L冲刺
+
+# 游戏预览
+## Linux
+![linux](linux.png)
+## Windows
+![windows](windows.png)
