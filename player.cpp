@@ -36,7 +36,7 @@ void Player::update()
                              iswin = 1;
                          }
 
-                        //下面这段先注释掉，用于调试👇
+                         // 下面这段先注释掉，用于调试👇
 
                          // // 如果下一个位置是enemy，判负
                          // if (iscoincide(roleblock.pos.y + v.y * ydirection, roleblock.pos.x + v.x * xdirection, ENEMY))
@@ -69,7 +69,7 @@ void Player::update()
             break;
         }
     }
-    
+
     if (canJump && isJumping) // 如果能跳跃并且正在跳跃
     {
         ydirection = UP;
@@ -133,6 +133,7 @@ void Player::render()
     UnsetColor(roleblock.foregroundcolor, roleblock.backgroundcolor); });
 }
 
+// 2024/3/28：这个似乎应该写在roleblock类里，当初应该是因为只有player类用到了碰撞检测，所以直接写到了这里
 bool Player::iscoincide(int y, int x, int object2)
 {
     if (map->blocktype[y][x].type == object2)
