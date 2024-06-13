@@ -250,7 +250,7 @@ void Player::dash(Roleblock &roleblock) // 冲刺突进技能
     if (isdash == true && dash_cooling_time == 0) // 冲刺突进技能
     {
         dash_cooling_time = DASH_COOLING_TIME;
-        roleblock.foregroundcolor = _255_0_255;
+        // roleblock.foregroundcolor = _255_0_255;
 
         if (canJump == false && isJumping == true) // 如果角色在冲刺时恰好不能跳跃（在最高点）并且按着跳跃键，则把ydirection设置成-1，让它仍能往上冲刺，而不是canJump==false让ydirection=1
         {
@@ -302,6 +302,10 @@ void Player::dash(Roleblock &roleblock) // 冲刺突进技能
         v.y *= tmp;
 
         isdash = false;
+    }
+    if (dash_cooling_time != 0)
+    {
+        roleblock.foregroundcolor = _255_0_255;
     }
 }
 

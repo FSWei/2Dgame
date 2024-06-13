@@ -88,17 +88,17 @@ https://learn.microsoft.cameraom/zh-cn/windows/console/console-screen-buffer-inf
 但是探索很长时间后，发现怎么修改都是没有效果。遂放弃
 其二：直接用ansi转义符，设置背景和前景颜色，这个方法成功了，通过printw("\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm", i, j, k, k, j, i);设置前景和背景颜色
 打印字符之后，再用printw("\x1B[0m");恢复默认状态即可
-详细的测试代码见文件夹test里的color_test.camerapp
+详细的测试代码见文件夹test里的color_test.cpp
 *(改是改好了，但是卡顿和闪烁问题变得很严重，双缓冲问题亟待解决)*
 
-√3、颜色修改过程中，用到了"整数打包"和"整数解包"的技术，测试代码见test\data_pack.camerapp
+√3、颜色修改过程中，用到了"整数打包"和"整数解包"的技术，测试代码见test\data_pack.cpp
 4、修改vscode工作区里2dgame子目录test下的cpp文件单独使用一个.vscode配置
 5、在cmd控制台中光标偶尔会莫名其妙自己显现出来，但是似乎不是代码的问题而是系统的问题
 
 
 2023/10/22 12:41
 1、今天开始着手双缓冲的优化
-测试代码见exe\double_buffer_test.camerapp，里面实现了基本的双缓冲逻辑
+测试代码见exe\double_buffer_test.cpp，里面实现了基本的双缓冲逻辑
 但是其实测试代码中的方法不能用于我的2dgame，因为其中对于颜色的修改还是通过修改Attributes属性来实现，这样输出的颜色有很大的局限性
 而我要通过ansi转义符来实现颜色的更改
 目前所想的解决办法是在consoleBuffer中预留出空间，专门用于存储颜色转换的ANSI转义符和恢复默认的ANSI转义符
@@ -113,16 +113,16 @@ https://learn.microsoft.cameraom/zh-cn/windows/console/console-screen-buffer-inf
 **2、或者用NCurses重写代码**
 
 16:33
-尝试了很长时间的方法（见exe\double_buffer_test2.camerapp），代码的难度太大，计算比较复杂
+尝试了很长时间的方法（见exe\double_buffer_test2.cpp），代码的难度太大，计算比较复杂
 
 2023/10/23 10:38
 今天开始进行蓝桥杯准备，此项目暂时搁置
 
 2023/10/24 18:59
-白天又调试了一下Double_Buffer_test2.camerapp，仍然存在一些小问题
+白天又调试了一下Double_Buffer_test2.cpp，仍然存在一些小问题
 
 2023/11/6 19:57
-今天再次调试了Double_Buffer_test3.camerapp，bug仍然存在，估计就是因为缓冲区中的字符数远远超出了控制台长度（即使转义字符根本不会在控制台中实际显示出来）
+今天再次调试了Double_Buffer_test3.cpp，bug仍然存在，估计就是因为缓冲区中的字符数远远超出了控制台长度（即使转义字符根本不会在控制台中实际显示出来）
 其实我也不确定错误原因究竟是什么，而且我感觉很可能不是这个原因👆
 不管了，放弃这个方法
 下面简单阐述一下思路
@@ -196,7 +196,7 @@ Separate control modules under Linux and Windows
 
 目前发现的一个新的问题是，在游戏结束后，提示用户继续游戏还是退出游戏的时候，即使用户选择了退出游戏（N/n），仍然会继续游戏，我推测是在游戏结束后，开启阻塞模式，虽然程序会等待用户输入，但是其实输入缓冲区中仍然有键值残余，即使用户输入了，录入的choice值也不是用户输入的，而是以前的键值残余，不过这个bug倒是不难修改
 
-g++ -fdiagnostics-color=always -g /media/fsw/data/github/2Dgame/*.camerapp -o /media/fsw/data/github/2Dgame/exe/game -lncurses
+g++ -fdiagnostics-color=always -g /media/fsw/data/github/2Dgame/*.cpp -o /media/fsw/data/github/2Dgame/exe/game -lncurses
 
 2024/1/28 14:07
 今天完成了程序在linux和windows双系统的适配
@@ -281,9 +281,18 @@ bug：卡墙角、吃墙、两侧roleblock下坠判断过于提前导致左右�
 最近琐事繁多，生活也步入正轨，以后有时间再搞吧。
 下面记录几个暂时注释的地方和问题：
 1、player.cpp:39暂时注释（敌人碰撞判断）
-2、冲刺后的颜色更新问题
+√2、冲刺后的颜色更新问题
+（2024/6/13 17:24）
+（问题主要出现在player.cpp中102行update中循环调用dash的时候，在第一次调用时就把dash_cooling_time置为非0。
+但奇怪的是，roleblock的颜色没有变，位置却正常在dash）
+解决方法1：把dash_cooling_time != 0 单独拉出来专门给颜色改变做判断，放到dash函数的最后
+解决方法2：把对isdash和dash_cooling_time==0的判断拿出来放在update中循环调用dash之前，这样只判断一次，就直接渲染所有roleblock
+目前暂时使用解决方法1
 3、以前说过的很多问题
 
 2024/3/28 15:32
 1、player.cpp:136
 2、角色类role的抽象，但是要解决不同角色的形状、block数量等不同的问题（可用动态数组等解决）
+
+2024/6/13 16:44
+main函数中的一些初始化操作可以集成为init函数
